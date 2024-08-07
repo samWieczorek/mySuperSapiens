@@ -38,9 +38,10 @@ dashboardPage(
       tabItem("stats",
         box(
           width = 12, status = "info", solidHeader = TRUE,
-          title = "Glycémie",
-          p('stats')
-        )),
+          title = "Time spent in glucose zones",
+          highchartOutput('timeInGlucoseZones')
+        )
+        ),
        tabItem("alimentation",
          box(
          width = 12, status = "info", solidHeader = TRUE,

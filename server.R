@@ -105,14 +105,18 @@ function(input, output, session) {
   
   
   output$meanPerDay <- renderHighchart({
-    data <- GetMeanPerDay()
-    hc <-
-      highchart(type = "stock") %>%
-      
+    # data <- GetMeanPerDay()
+    # hc <-
+    #   highchart(type = "stock") %>%
+    #   
   })
   
   
   output$variancePerDay <- renderHighchart({
+  })
+  
+  
+  output$timeInGlucoseZones <- renderHighchart({
   })
   
 }
