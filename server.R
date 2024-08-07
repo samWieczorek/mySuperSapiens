@@ -173,7 +173,7 @@ function(input, output, session) {
         hcaes(x = 'day', y = 'percentage', group = 'zone'),
         stacking = "normal"
       ) %>%
-      hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_colors(zones[, 'Color']) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black')))
     
     
@@ -184,19 +184,24 @@ function(input, output, session) {
   output$heatmapPerHour <- renderHighchart({
     
     df <- zoo::fortify.zoo(test$Glycemie)
-    df$hour <- format(df$Index, "%Y-%m-%d %H")
+    df$hour <- format(df$Index, "%H")
     df$day <- format(df$Index, "%Y-%m-%d")
-    res <- aggregate(source~ hour + day, df, mean)
-  
+    res2 <- aggregate(source~ day + hour, df, mean)
+    res2[, 'source'] <- round(res2[, 'source'], 1)
+    res2 <- cbind(res2, zone = unlist(lapply(res2[, 'source'], function(x) GetZone(x))))
+    
+    
     hc <- highchart() %>%
-      hc_add_series(data = res, type = 'heatmap', 
+      hc_add_series(data = res2, type = 'heatmap', 
         hcaes(x = hour, y = day, value = source), 
         name = "Median Price",
         dataLabels = list(enabled = FALSE)) %>%
-    hc_colorAxis(
-      dataClasses = color_classes(zones[, 'Max'],
-        colors = zones[, 'Color']
-      ))
+      hc_colorAxis(
+        dataClasses = color_classes(zones[, 'Max'],
+          colors = zones[, 'Color']
+        ))
+    
+    hc
     
   })
 }
