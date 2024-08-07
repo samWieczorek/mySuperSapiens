@@ -21,15 +21,16 @@ dashboardPage(
           box(
             width = 12, status = "info", solidHeader = TRUE,
             title = "Glycémie",
-            highchartOutput('showRawData')
+            checkboxInput('showzones', 'Show zones', value = FALSE),
+            highchartOutput('showRawData', height = '800px')
           ),
           box(
-            width = 4, status = "info",
+            width = 6, status = "info",solidHeader = TRUE,
             title = "Mean per day",
-            tableOutput("meanPerDay")
+            highchartOutput("meanPerDay")
           ),
           box(
-            width = 12, status = "info", solidHeader = TRUE,
+            width = 6, status = "info", solidHeader = TRUE,
             title = "Variance per day",
             highchartOutput('variancePerDay')
           )
@@ -37,10 +38,19 @@ dashboardPage(
       ),
       tabItem("stats",
         box(
-          width = 12, status = "info", solidHeader = TRUE,
+          width = 6, status = "info", solidHeader = TRUE,
           title = "Time spent in glucose zones",
           highchartOutput('timeInGlucoseZones')
+        ),
+        box(
+          width = 6, status = "info", solidHeader = TRUE,
+          title = "Heatmap per hour",
+          highchartOutput('heatmapPerHour')
         )
+        
+        
+        
+        
         ),
        tabItem("alimentation",
          box(

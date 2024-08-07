@@ -1,9 +1,9 @@
-GetTimeInGlucoseZones <- function(xxx){
+GetTimeInGlucoseZones <- function(data){
   
   GetZone <- function(value){
     zone <- NULL
     for (i in rownames(zones))
-      if (value >= zones[i, 'Min'] && value <= zones[i, 'Max'])
+      if (value >= zones[i, 'Min'] && value < zones[i, 'Max'])
       zone <- i
     
     zone
@@ -16,43 +16,64 @@ GetTimeInGlucoseZones <- function(xxx){
   }
   
   
-  toto <- function(data){
-    browser()
-    timeduration <- setNames(rep('00:00', 4), nm = LETTERS[seq(4)])
-    
-  }
   
   df <- zoo::fortify.zoo(data)
   
   ll.days <- unique(strptime(df[, 'Index'], format = '%Y-%m-%d'))
-  timeduration <- setNames(rep('00:00', 4), nm = LETTERS[seq(4)])
+  result <- data.frame(
+    A = rep(hms::as_hms('00:00:00'), length(ll.days)), 
+    B = rep(hms::as_hms('00:00:00'), length(ll.days)),
+    C = rep(hms::as_hms('00:00:00'), length(ll.days)),
+    D = rep(hms::as_hms('00:00:00'), length(ll.days))
+    )
+  rownames(result) <- ll.days
   
   
-  for (i in (nrow(df) - 1)){
-    first <- df[i, ]
-    second <- df[i+1, ]
+  result.seconds <- result.percentage <- data.frame(
+    A = rep(0, length(ll.days)), 
+    B = rep(0, length(ll.days)),
+    C = rep(0, length(ll.days)),
+    D = rep(0, length(ll.days))
+  )
+  rownames(result.seconds) <- ll.days
+  
+  
+  
+  for (i in seq((nrow(df) - 1))){
+    value <- df[i, ]$source
+    zone <- GetZone(value)
+    day <- strptime(df[i, ]$Index, format = '%Y-%m-%d')
     
-    value1 <- first$source
-    value2 <- second$source
-    zone1 <- GetZone(value1)
-    zone2 <- GetZone(value2)
-    day1 <- strptime(first$Index, format = '%Y-%m-%d')
-    day2 <- strptime(second$Index, format = '%Y-%m-%d')
-    # 
-    if (day1 == day2){
-      if (zone1 == zone2){
-      duration <- day2 - day1
-      
-      } else {
-        
-      }
-      
-    } else {
-      
+    ind.day <- which(rownames(result) == day)
+    #if(zone == 'A')
+    #  browser()
+    ind.zone <- which(colnames(result) == zone)
+
+    #print(paste0(value, ' ', zone, ' ', day, ' ', ind.day, ' ', ind.zone, ' ', result[ind.day, ind.zone]))
+    result[ind.day, ind.zone] <- hms::as_hms(result[ind.day, ind.zone] + 60)
+    result.seconds[ind.day, ind.zone] <- result.seconds[ind.day, ind.zone] + 60
     }
-    
-    
-  }
+
+  result.percentage <- round(prop.table(as.matrix(result.seconds),1),2)
   
+  list(
+    time = result,
+    percentage = result.percentage
+  )
+}
+
+
+
+
+
+FindGlucoseRushes <- function(df){
+  for (i in seq((nrow(df) - 5))){
+    setVal <- df[seq(from=i, to=i+5, by=1), 'source']
+    diffval <- min(setVal)
+    
+    #print(paste0(value, ' ', zone, ' ', day, ' ', ind.day, ' ', ind.zone, ' ', result[ind.day, ind.zone]))
+    result[ind.day, ind.zone] <- hms::as_hms(result[ind.day, ind.zone] + 60)
+    result.seconds[ind.day, ind.zone] <- result.seconds[ind.day, ind.zone] + 60
+  }
   
 }
