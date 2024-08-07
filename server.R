@@ -1,7 +1,7 @@
 function(input, output, session) {
   
   test <- BuildData()
-  
+  tags <- BuildData()$Tags
   
   GetRawData <- reactive({
     highchart(type = "stock") %>%
