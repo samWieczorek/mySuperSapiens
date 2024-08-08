@@ -3,6 +3,7 @@ dashboardPage(
   dashboardSidebar(
     
     sidebarMenu(
+      menuItem("Settings", tabName = "Configure"),
       menuItem("Suivi glycemie", tabName = "rawdata"),
       menuItem("Stats", tabName = "stats"),
       menuItem("Alimentation", tabName = "alimentation"),
@@ -11,6 +12,16 @@ dashboardPage(
   ),
   dashboardBody(
     tabItems(
+      tabItem("Configure",
+        fluidRow(
+          box(
+            width = 12, status = "info", solidHeader = TRUE,
+            title = "Define zones",
+            uiOutput('zones_UI')
+            )
+          )
+        
+        ),
       tabItem("rawdata",
         # fluidRow(
         #   valueBoxOutput("rate"),
@@ -32,6 +43,7 @@ dashboardPage(
           box(
             width = 6, status = "info", solidHeader = TRUE,
             title = "Variance per day",
+            p('Défini en pourcentage du coefficient de variation (%CV) ; Cible ≤ 36 %'),
             highchartOutput('variancePerDay')
           )
         )
@@ -46,7 +58,13 @@ dashboardPage(
           width = 6, status = "info", solidHeader = TRUE,
           title = "Heatmap per hour",
           highchartOutput('heatmapPerHour')
+        ),
+        box(
+          width = 12, status = "info", solidHeader = TRUE,
+          title = "Profil de Glucose Ambulatoire (PGA)",
+          highchartOutput('pga')
         )
+        
         
         
         

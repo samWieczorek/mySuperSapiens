@@ -77,3 +77,25 @@ FindGlucoseRushes <- function(df){
   }
   
 }
+
+
+Compute_PGA <- function(df){
+  df <- zoo::fortify.zoo(df)
+  df$hour <- format(df$Index, "%H:%M")
+  #group by hours in time column and calculate sum of sales
+  pga <- df %>%
+    group_by(hour) %>%
+    #summarize(sum_source = sum(source)) %>%
+    summarize(
+      quantile_5 = quantile(source)[1],
+      quantile_25 = quantile(source)[2],
+      quantile_50 = quantile(source)[3],
+      quantile_75 = quantile(source)[4],
+      quantile_95 = quantile(source)[5]
+    )
+  
+  colnames(pga) <- c('hour', 'Q5', 'Q25', 'Q50', 'Q75', 'Q95')
+  pga
+  
+  
+}

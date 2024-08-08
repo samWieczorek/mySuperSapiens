@@ -2,6 +2,9 @@ library(shiny)
 library(shinydashboard)
 library(highcharter)
 library(xts)
+library(shinyWidgets)
+library(dplyr)
+
 
 hcGopts <- getOption("highcharter.global")
 hcGopts$useUTC <- FALSE
@@ -16,39 +19,7 @@ zones <- data.frame(
     'Recharge glucidique optimale', 
     'Etat d’inflammation latent', 
     'Hyperglycemie'),
-  Color = c("#273b76", "#6832c0", "#567df2", "#c281c8", "#fd5878")
+  Color = c("#273b76", "#6832c0", "#567df2", "#c281c8", "#fd3a4c")
 )
 rownames(zones) <- LETTERS[seq(5)]
 
-viewzones <- list(
-  list(
-    #label = list(text = "xxxx"),
-    color = zones['A', 'Color'],
-    from = zones['A', 'Min'],
-    to = zones['A', 'Max']
-  ),
-  list(
-    #label = list(text = "xxxx"),
-    color = zones['B', 'Color'],
-    from = zones['B', 'Min'],
-    to = zones['B', 'Max']
-  ),
-  list(
-    #label = list(text = "xxxx"),
-    color = zones['C', 'Color'],
-    from = zones['C', 'Min'],
-    to = zones['C', 'Max']
-  ),
-  list(
-    #label = list(text = "xxxx"),
-    color = zones['D', 'Color'],
-    from = zones['D', 'Min'],
-    to = zones['D', 'Max']
-  ),
-  list(
-    #label = list(text = "xxxx"),
-    color = zones['E', 'Color'],
-    from = zones['E', 'Min'],
-    to = zones['E', 'Max']
-  )
-)
