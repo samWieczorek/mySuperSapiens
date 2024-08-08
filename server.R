@@ -152,11 +152,8 @@ function(input, output, session) {
         # ),
         plotBands = NULL
       ) %>%
-      hc_add_series(test$Glycemie, type = "spline", color = 'blue') %>%
-      hc_colorAxis(minColor = "#FFFFFF", maxColor = "#434348",
-        type = "logarithmic") %>%
+      hc_add_series(test$Glycemie$source, type = "spline", color = 'blue') %>%
       hc_annotations(
-        
         list(
           labelOptions = list(
             backgroundColor = 'rgba(255,255,255,0.6)',
@@ -210,7 +207,7 @@ function(input, output, session) {
         name = "Q25_75",
         hcaes(x = hour, low = Q25, high = Q75),
         linkedTo = "fit", ## here we link the legends in one.
-        showInLegend = FALSE,
+        showInLegend = TRUE,
         color = "#a2b5d4",  ## put a semi transparent color
         zIndex = -3 ## this is for put the series in a back so the points are showed first
       ) %>% 
@@ -220,7 +217,7 @@ function(input, output, session) {
         name = "Q5_95",
         hcaes(x = hour, low = Q5, high = Q95),
         linkedTo = "fit", ## here we link the legends in one.
-        showInLegend = FALSE,
+        showInLegend = TRUE,
         color = "#dfe3ed",  ## put a semi transparent color
         zIndex = -3 ## this is for put the series in a back so the points are showed first
       ) %>%
@@ -229,12 +226,24 @@ function(input, output, session) {
         max = max(pga[,2:6]), 
         title = list(text = "Glycémie (mg/dl)"),
         plotBands = viewzones()
+      ) %>%
+      hc_plotOptions(
+        series = list(
+          marker = list(
+            enabled = FALSE
+          )
+        )
+      ) %>%
+      hc_xAxis(
+        labels = list(format = '{value:%H:%M}')
       )
+        
+
     hc
   })
   
   output$meanPerDay <- renderHighchart({
-    df <- GetMeanPerDay(titi)
+    df <- GetMeanPerDay(glycemie)
     df[,'source'] <- round(df[,'source'], 2)
     
     hc <- df %>% 
@@ -252,6 +261,46 @@ function(input, output, session) {
     hc
     
   })
+  
+  
+  output$meanPerHour <- renderHighchart({
+    df <- GetMeanPerHour(glycemie)
+    df[,'source'] <- round(df[,'source'], 2)
+    
+    hc <- df %>% 
+      hchart(
+        'column', 
+        hcaes(x = 'hour', y = 'source')) %>%
+      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
+      hc_colorAxis(
+        dataClasses = color_classes(zones[, 'Max'],
+          colors = zones[, 'Color']
+        ))
+    
+    
+    hc
+    
+  })
+  
+  
+  
+  output$wholerushes <- renderHighchart({
+    hc <- highchart(type = "stock") %>%
+      hc_add_series(glycemie$rushes, type = 'column') %>%
+      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
+      hc_xAxis(
+        labels = list(format = '{value:%Y/%m/%d %H:%M}'),
+        options = list(
+          timezoneOffset = 2
+        )
+      )
+    
+    hc
+    
+  })
+  
   
   
   output$variancePerDay <- renderHighchart({
@@ -273,10 +322,32 @@ function(input, output, session) {
         dataClasses = color_classes(zones[, 'Max'],
           colors = zones[, 'Color']
         ))
-    
-    
     hc
   })
+  
+  
+  
+  output$variancePerHour <- renderHighchart({
+    
+    df <- GetVariancePerHour(test$Glycemie)
+    
+    colfunc <- colorRampPalette(c("#f95c75", "#653fc6"))
+    colorseq <- c(70, 90, 140, 250, 300)
+    
+    
+    hc <- df %>% 
+      hchart(
+        'column', 
+        hcaes(x = 'hour', y = 'source')) %>%
+      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
+      hc_colorAxis(
+        dataClasses = color_classes(zones[, 'Max'],
+          colors = zones[, 'Color']
+        ))
+    hc
+  })
+  
   
   
   output$timeInGlucoseZones <- renderHighchart({

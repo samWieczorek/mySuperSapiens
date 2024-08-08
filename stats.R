@@ -66,23 +66,27 @@ GetTimeInGlucoseZones <- function(data){
 
 
 
-FindGlucoseRushes <- function(df){
+FindGlucoseRushes <- function(df, th = 10){
+  date <- rushes <- NULL
+  df <- zoo::fortify.zoo(df)
   for (i in seq((nrow(df) - 5))){
-    setVal <- df[seq(from=i, to=i+5, by=1), 'source']
-    diffval <- min(setVal)
-    
-    #print(paste0(value, ' ', zone, ' ', day, ' ', ind.day, ' ', ind.zone, ' ', result[ind.day, ind.zone]))
-    result[ind.day, ind.zone] <- hms::as_hms(result[ind.day, ind.zone] + 60)
-    result.seconds[ind.day, ind.zone] <- result.seconds[ind.day, ind.zone] + 60
-  }
-  
+    diffval <- as.numeric(df[i+5, 'source']) - as.numeric(df[i, 'source'])
+
+    if (abs(diffval) >= th)
+      rushes <- c(rushes, as.numeric(diffval))
+    else
+      rushes <- c(rushes, 0)
+ }
+  rushes
 }
 
 
 Compute_PGA <- function(df){
   df <- zoo::fortify.zoo(df)
-  df$hour <- format(df$Index, "%H:%M")
+  df$hour <- format(df$Index, "%H")
   #group by hours in time column and calculate sum of sales
+  pga <- aggregate(source ~ hour, df, quantile)
+  #
   pga <- df %>%
     group_by(hour) %>%
     #summarize(sum_source = sum(source)) %>%

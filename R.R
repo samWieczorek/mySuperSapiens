@@ -42,16 +42,29 @@ for (i in seq(length(lines))){
 df.glycemie <- data.frame(date = date, source = source)
 df.glycemie <- df.glycemie[order(df.glycemie$date),]
 new.data <- Discretise(df.glycemie)
-
 df.glycemie <- rbind(df.glycemie, new.data)
+df.glycemie <- df.glycemie[order(df.glycemie$date),]
+
+
+#Compute rushes
+rushes <- rep(0, nrow(df.glycemie))
+th <- 10
+
+for (i in seq((nrow(df.glycemie) - 5))){
+  diffval <- as.numeric(df.glycemie[i+5, 'source']) - as.numeric(df.glycemie[i, 'source'])
+  
+  if (abs(diffval) >= th)
+    rushes[i] <- as.numeric(diffval)
+}
+
+df.glycemie <- cbind(df.glycemie, rushes = rushes)
+df.glycemie <- df.glycemie[order(df.glycemie$date),]
+
 
 df.glycemie_xts <- xts::xts(df.glycemie[-1],
   order.by = as.POSIXct(
     df.glycemie$date,
     format="%Y-%m-%d %H:%M"))
-
-
-
 
 df.tags <- data.frame(date = date.tags, source = source.tags)
 
@@ -116,9 +129,20 @@ GetMeanPerDay <- function(data){
   aggregate(source ~ day, df, mean)
 }
 
+GetMeanPerHour <- function(data){
+  df <- zoo::fortify.zoo(data)
+  df$hour <- format(df$Index, "%H")
+  aggregate(source ~ hour, df, mean)
+}
 
 GetVariancePerDay <- function(data){
   df <- zoo::fortify.zoo(data)
   df$day <- format(df$Index, "%d")
   aggregate(source ~ day, df, sd)
+}
+
+GetVariancePerHour <- function(data){
+  df <- zoo::fortify.zoo(data)
+  df$hour <- format(df$Index, "%H")
+  aggregate(source ~ hour, df, sd)
 }
