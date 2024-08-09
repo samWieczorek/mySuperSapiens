@@ -51,17 +51,19 @@ df.glycemie <- df.glycemie[order(df.glycemie$date),]
 
 
 #Compute rushes
-rushes <- rep(0, nrow(df.glycemie))
+rushes.pos <- rushes.neg <- rep(0, nrow(df.glycemie))
 th <- 10
 
 for (i in seq((nrow(df.glycemie) - 5))){
   diffval <- as.numeric(df.glycemie[i+5, 'source']) - as.numeric(df.glycemie[i, 'source'])
   
-  if (abs(diffval) >= th)
-    rushes[i] <- as.numeric(diffval)
+  if (diffval >= th)
+    rushes.pos[i] <- as.numeric(diffval)
+  else if (diffval <= -th)
+    rushes.neg[i] <- as.numeric(diffval)
 }
 
-df.glycemie <- cbind(df.glycemie, rushes = rushes)
+df.glycemie <- cbind(df.glycemie, rushes.pos = rushes.pos, rushes.neg = rushes.neg)
 df.glycemie <- df.glycemie[order(df.glycemie$date),]
 
 

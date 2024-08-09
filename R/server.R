@@ -281,8 +281,10 @@ function(input, output, session) {
   
   output$wholeRushes <- renderHighchart({
     hc <- highchart(type = "stock") %>%
-      hc_add_series(glycemie$rushes, type = 'column') %>%
-      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_add_series(glycemie$rushes.pos, type = 'column', color = 'blue') %>%
+      hc_add_series(glycemie$rushes.neg, type = 'column', color = 'red') %>%
+      #hc_add_series(glycemie$rushes.pos, type = 'areaspline', color = 'lightblue') %>%
+      #hc_add_series(glycemie$rushes.neg, type = 'areaspline', color = 'orange') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_xAxis(
         labels = list(format = '{value:%Y/%m/%d %H:%M}'),
