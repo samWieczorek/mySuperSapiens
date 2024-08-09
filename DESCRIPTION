@@ -1,0 +1,18 @@
+Package: mySuperSapiens
+Type: Package
+Title: Tools for the Different
+Version: 1.36.2
+Date: 2024-06-10
+Author: person(given = "Samuel", family = "Wieczorek",
+  email = "samuel.wieczorek@cea.fr", role = c("aut","cre"))
+Maintainer: Samuel Wieczorek <samuel.wieczorek@cea.fr>
+License: Artistic-2.0
+VignetteBuilder: knitr
+Depends: R (>= 4.4.0)
+Suggests: testthat
+NeedsCompilation: no
+RoxygenNote: 7.3.2
+Packaged: 2017-10-13 11:13:04 UTC; sw175264
+Encoding: UTF-8
+URL: http://www.prostar-proteomics.org/
+  BugReports: https://github.com/prostarproteomics/DAPAR/issues
