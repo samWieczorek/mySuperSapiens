@@ -78,6 +78,8 @@ FindGlucoseRushes <- function(df, th = 10){
   rushes
 }
 
+
+#' @title Profil Glycemique Ambulatoire
 #' @export
 Compute_PGA <- function(df){
   message('Compute_PGA()...')
@@ -105,6 +107,7 @@ Compute_PGA <- function(df){
 
 
 
+#' @title Mean of glycemie per day
 #' @export
 GetMeanPerDay <- function(data){
   message('GetMeanPerDay()...')
@@ -118,6 +121,8 @@ GetMeanPerDay <- function(data){
 }
 
 
+
+#' @title Mean of glycemie per hour
 #' @export
 GetMeanPerHour <- function(data){
   message('GetMeanPerHour()...')
@@ -131,6 +136,8 @@ GetMeanPerHour <- function(data){
 }
 
 
+
+#' @title Variance per day
 #' @export
 GetVariancePerDay <- function(data){
   message('GetVariancePerDay()...')
@@ -144,6 +151,8 @@ GetVariancePerDay <- function(data){
 }
 
 
+
+#' @title Variance per hour
 #' @export
 GetVariancePerHour <- function(data){
   message('GetVariancePerHour()...')

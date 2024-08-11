@@ -71,11 +71,13 @@ df.supersapiens <- cbind(df.supersapiens,
 
 
 message('Adding tags to dataset...')
-for (d in date.tags){
+for (d in seq(length(date.tags))){
   ind <- which(df.supersapiens$date == date.tags[d])
   df.supersapiens[ind, 'tag.description'] <- source.tags[d]
 }
 
+message('Fixing missing values in tags...')
+df.supersapiens <- Fix_tags(df.supersapiens)
 
 #Compute rushes
 message('Compute rushes...')
@@ -175,4 +177,12 @@ Discretise <- function(df){
   
   additionalData <- data.frame(date = date, glycemie = glycemie)
   additionalData
+}
+
+
+Fix_tags <- function(df){
+  df[15, 'tag.type'] <- 'Alimentation'
+  
+  
+  df
 }
