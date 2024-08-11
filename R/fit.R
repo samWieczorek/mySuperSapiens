@@ -1,7 +1,8 @@
-ReadFit <- function(path){
-  fit <- read.csv(path, header = TRUE, sep = ',')
-  
-  
+ConvertFitFile <- function(path, name){
+  fit <- read.csv(file.path(path, name), header = TRUE, sep = ',')
+  filename <- strsplit(name, split = '-record.csv')[[1]][1]
+  filename <- gsub('-', '_', filename)
+
   #Add two hours
   addTime <- function(ts, addSeconds){
     ts <- as.character(ts)
@@ -16,8 +17,13 @@ ReadFit <- function(path){
   }
   
   #Fix timezone
-   fit <- cbind(fit, mydate = addTime(fit$timestamp, 2*60*60))
+   fit <- cbind(fit, date = addTime(fit$timestamp, 2*60*60))
 
-  
-  fit
+   fit_xts <- xts::xts(fit[-1],
+     order.by = as.POSIXct(
+       fit$date,
+       format="%Y-%m-%d %H:%M"))
+   
+   assign(filename, fit_xts)
+   eval(parse(text = paste0("save('", filename, "', file = 'data/",filename,".RData')")))
 }

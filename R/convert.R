@@ -61,12 +61,12 @@ message('Adding new columns to dataset...')
 df.supersapiens <- cbind(df.supersapiens, 
   tag.type = rep('', nrow(df.supersapiens)),
   tag.description = rep('', nrow(df.supersapiens)),
-  tag.description2 = rep('', nrow(df.supersapiens)),
-  fit.heart.rate = rep(0, nrow(df.supersapiens)),
-  fit.distance = rep(0, nrow(df.supersapiens)),
-  fit.enhanced.speed = rep(0, nrow(df.supersapiens)),
-  fit.enhanced.altitude = rep(0, nrow(df.supersapiens)),
-  fit.denivele = rep(0, nrow(df.supersapiens))
+  tag.description2 = rep('', nrow(df.supersapiens))
+  # fit.heart.rate = rep(0, nrow(df.supersapiens)),
+  # fit.distance = rep(0, nrow(df.supersapiens)),
+  # fit.enhanced.speed = rep(0, nrow(df.supersapiens)),
+  # fit.enhanced.altitude = rep(0, nrow(df.supersapiens)),
+  # fit.denivele = rep(0, nrow(df.supersapiens))
   )
 
 
@@ -104,21 +104,6 @@ df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
 
 
 
-#
-# Add fit file data
-#
-path <- '../../../Documents/Personnel/Suivi Glycemie/MountainBiking_2024-08-10T05_04_29-record.csv'
-myfit <- ReadFit(path)
-#browser()
-apply(myfit, 1, function(x){
-  ind <- which(df.supersapiens$date == x['mydate'])
-  browser()
-}
-  
-)
-
-
-
 
 message('Convert dataset to xts format...')
 df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
@@ -128,31 +113,43 @@ df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
 
 df.supersapiens_xts$glycemie <- as.numeric(df.supersapiens_xts$glycemie)
 
+supersapiens_supersapiens_xts <- df.supersapiens_xts
 
 
+supersapiens_meanPerDay <- GetMeanPerDay(df.supersapiens_xts$glycemie)
+supersapiens_meanPerHour <- GetMeanPerHour(df.supersapiens_xts$glycemie)
+supersapiens_variancePerDay <- GetVariancePerDay(df.supersapiens_xts$glycemie)
+supersapiens_variancePerHour <- GetVariancePerHour(df.supersapiens_xts$glycemie)
+supersapiens_timeInZones <-  GetTimeInGlucoseZones(df.supersapiens_xts$glycemie)
+supersapiens_pga <- Compute_PGA(df.supersapiens_xts$glycemie)
+supersapiens_heatmapPerHour <- GetHeatmapPerHour(df.supersapiens_xts$glycemie)
 
-meanPerDay <- GetMeanPerDay(df.supersapiens_xts$glycemie)
-meanPerHour <- GetMeanPerHour(df.supersapiens_xts$glycemie)
-variancePerDay <- GetVariancePerDay(df.supersapiens_xts$glycemie)
-variancePerHour <- GetVariancePerHour(df.supersapiens_xts$glycemie)
-timeInZones <-  GetTimeInGlucoseZones(df.supersapiens_xts$glycemie)
-pga <- Compute_PGA(df.supersapiens_xts$glycemie)
-heatmapPerHour <- GetHeatmapPerHour(df.supersapiens_xts$glycemie)
-
-
-save(glycemie.orig,
-  df.supersapiens, 
-  meanPerDay, meanPerHour,
-  variancePerDay, variancePerHour,
-  timeInZones = timeInZones,
-  pga = pga,
-  heatmapPerHour = heatmapPerHour,
-  file = 'data/glycemie.RData')
+save(
+  supersapiens_supersapiens_xts, 
+  supersapiens_meanPerDay, 
+  supersapiens_meanPerHour,
+  supersapiens_variancePerDay, 
+  supersapiens_variancePerHour,
+  supersapiens_timeInZones,
+  supersapiens_pga,
+  supersapiens_heatmapPerHour,
+  file = 'data/supersapiens.RData')
 
 }
 
 
 
+BuildFitData <- function(){
+  
+  path <- '../../../Documents/Personnel/Suivi Glycemie/'
+
+  ll.fit <- list.files(path)
+  ll.fit <- ll.fit[grepl('-record.csv', ll.fit)]
+
+  for(f in ll.fit)
+    ConvertFitFile(path, f)
+
+}
 
 #' @export
 ComputeLineEq <- function(t1, v1, t2, v2){
