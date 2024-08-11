@@ -93,11 +93,32 @@ for (i in seq((nrow(df.supersapiens) - 5))){
     rushes.neg[i] <- as.numeric(diffval)
 }
 
-df.supersapiens <- cbind(df.supersapiens, rushes.pos = rushes.pos, rushes.neg = rushes.neg)
+df.supersapiens <- cbind(
+  df.supersapiens, 
+  rushes.pos = rushes.pos, 
+  rushes.neg = rushes.neg)
 
 
 message('Ordering dataset by datetime...')
 df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+
+
+
+#
+# Add fit file data
+#
+path <- '../../../Documents/Personnel/Suivi Glycemie/MountainBiking_2024-08-10T05_04_29-record.csv'
+myfit <- ReadFit(path)
+#browser()
+apply(myfit, 1, function(x){
+  ind <- which(df.supersapiens$date == x['mydate'])
+  browser()
+}
+  
+)
+
+
+
 
 message('Convert dataset to xts format...')
 df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
@@ -106,6 +127,9 @@ df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
     format="%Y-%m-%d %H:%M"))
 
 df.supersapiens_xts$glycemie <- as.numeric(df.supersapiens_xts$glycemie)
+
+
+
 
 meanPerDay <- GetMeanPerDay(df.supersapiens_xts$glycemie)
 meanPerHour <- GetMeanPerHour(df.supersapiens_xts$glycemie)
