@@ -25,24 +25,24 @@ dashboardPage(
           box(
             width = 6, status = "info",solidHeader = TRUE,
             title = "Mean per day",
-            highchartOutput("meanPerDay")
+            highchartOutput("meanPerDay_UI")
           ),
           box(
             width = 6, status = "info", solidHeader = TRUE,
             title = "Variance per day",
             p('Défini en pourcentage du coefficient de variation (%CV) ; Cible ≤ 36 %'),
-            highchartOutput('variancePerDay')
+            highchartOutput('variancePerDay_UI')
           ),
           box(
             width = 6, status = "info",solidHeader = TRUE,
             title = "Mean per hour",
-            highchartOutput("meanPerHour")
+            highchartOutput("meanPerHour_UI")
           ),
           box(
             width = 6, status = "info", solidHeader = TRUE,
             title = "Variance per hour",
             p('Défini en pourcentage du coefficient de variation (%CV) ; Cible ≤ 36 %'),
-            highchartOutput('variancePerHour')
+            highchartOutput('variancePerHour_UI')
           )
         )
       ),

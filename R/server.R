@@ -240,37 +240,31 @@ function(input, output, session) {
     hc
   })
   
-  output$meanPerDay <- renderHighchart({
+  output$meanPerDay_UI <- renderHighchart({
     
     hc <- meanPerDay %>% 
       hchart(
         'column', 
-        hcaes(x = 'day', y = 'source')) %>%
-      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+        hcaes(x = day, y = source)) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'],
-          colors = zones[, 'Color']
-        ))
-    
-    
+        dataClasses = color_classes(zones[, 'Max'], colors = zones[, 'Color'])
+        )
     hc
-    
   })
   
   
-  output$meanPerHour <- renderHighchart({
+  output$meanPerHour_UI <- renderHighchart({
     
     hc <- meanPerHour %>% 
       hchart(
         'column', 
         hcaes(x = 'hour', y = 'source')) %>%
-      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
+      hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'],
-          colors = zones[, 'Color']
-        ))
+        dataClasses = color_classes(zones[, 'Max'], colors = zones[, 'Color'])
+        )
     
     
     hc
@@ -299,7 +293,7 @@ function(input, output, session) {
   
   
   
-  output$variancePerDay <- renderHighchart({
+  output$variancePerDay_UI <- renderHighchart({
     
     colfunc <- colorRampPalette(c("#f95c75", "#653fc6"))
     colorseq <- c(70, 90, 140, 250, 300)
@@ -320,7 +314,7 @@ function(input, output, session) {
   
   
   
-  output$variancePerHour <- renderHighchart({
+  output$variancePerHour_UI <- renderHighchart({
     
     colfunc <- colorRampPalette(c("#f95c75", "#653fc6"))
     colorseq <- c(70, 90, 140, 250, 300)
