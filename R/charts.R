@@ -1,9 +1,9 @@
 #' @title Profil Glucidique Ambulatoire
 #' @export
-view_pga <- function(pga){
+view_pga <- function(){
   hc <- highchart() %>%
   hc_add_series(
-    pga,
+    supersapiens_pga,
     type = "spline",
     hcaes(x = hour, y = Q50),
     name = "Quantiles",
@@ -13,7 +13,7 @@ view_pga <- function(pga){
     showInLegend = TRUE
   ) %>% 
   hc_add_series(
-    pga,
+    supersapiens_pga,
     type = "arearange",
     name = "Q25_75",
     hcaes(x = hour, low = Q25, high = Q75),
@@ -23,7 +23,7 @@ view_pga <- function(pga){
     zIndex = -3 ## this is for put the series in a back so the points are showed first
   ) %>% 
   hc_add_series(
-    pga,
+    supersapiens_pga,
     type = "arearange",
     name = "Q5_95",
     hcaes(x = hour, low = Q5, high = Q95),
@@ -33,8 +33,8 @@ view_pga <- function(pga){
     zIndex = -3 ## this is for put the series in a back so the points are showed first
   ) %>%
   hc_yAxis(
-    min = min(pga[,2:6]), 
-    max = max(pga[,2:6]), 
+    min = min(supersapiens_pga[,2:6]), 
+    max = max(supersapiens_pga[,2:6]), 
     title = list(text = "Glycémie (mg/dl)"),
     plotBands = viewzones()
   ) %>%

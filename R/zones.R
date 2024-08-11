@@ -1,4 +1,7 @@
-zones <- data.frame(
+#' @title zones
+#' @export
+Zones <- function() {
+  zones <- data.frame(
   Min = c(0, 70, 90, 140, 250),
   Max = c(70, 90, 140, 250, 300),
   Info = c('Hypoglycemie',
@@ -12,13 +15,14 @@ rownames(zones) <- LETTERS[seq(5)]
 
 #! @export
 zones
+}
 
-
+#' @title Get zone
 #' @export
 GetZone <- function(value){
   zone <- NULL
-  for (i in rownames(zones))
-    if (value >= zones[i, 'Min'] && value < zones[i, 'Max'])
+  for (i in rownames(Zones()))
+    if (value >= Zones()[i, 'Min'] && value < Zones()[i, 'Max'])
       zone <- i
   
   zone

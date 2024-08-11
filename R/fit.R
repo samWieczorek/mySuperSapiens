@@ -1,3 +1,5 @@
+#' @title Convert a FIT file
+#' @export
 ConvertFitFile <- function(path, name){
   fit <- read.csv(file.path(path, name), header = TRUE, sep = ',')
   filename <- strsplit(name, split = '-record.csv')[[1]][1]

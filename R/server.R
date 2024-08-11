@@ -1,7 +1,7 @@
 function(input, output, session) {
   
  
-  data(glycemie)
+  data(supersapiens)
   
   output$zones_UI <- renderUI({
     tagList(
@@ -13,39 +13,39 @@ function(input, output, session) {
       #tags$style(HTML(".js-irs-4 .irs-single, .js-irs-4 .irs-bar-edge, .js-irs-4 .irs-bar {background: green}")),
       
       wellPanel(
-        style = paste0('background: ', zones['A', 'Color'], ';'),
+        style = paste0('background: ', Zones()['A', 'Color'], ';'),
         sliderInput('zoneA', "Zone A",
-        min = zones['A', 'Min'],
-        max = zones['E', 'Max'],
-        value = zones['A', c('Min','Max')])
+        min = Zones()['A', 'Min'],
+        max = Zones()['E', 'Max'],
+        value = Zones()['A', c('Min','Max')])
         ),
       wellPanel(
-        style = paste0('background: ', zones['B', 'Color'], ';'),
+        style = paste0('background: ', Zones()['B', 'Color'], ';'),
         sliderInput('zoneB', "Zone B",
-        min = zones['A', 'Min'], 
-        max = zones['E', 'Max'],
-        value = zones['B', c('Min','Max')])
+        min = Zones()['A', 'Min'], 
+        max = Zones()['E', 'Max'],
+        value = Zones()['B', c('Min','Max')])
         ),
       wellPanel(
-        style = paste0('background: ', zones['C', 'Color'], ';'),
+        style = paste0('background: ', Zones()['C', 'Color'], ';'),
         sliderInput('zoneC', "Zone C",
-        min = zones['A', 'Min'], 
-        max = zones['E', 'Max'],
-        value = zones['C', c('Min','Max')])
+        min = Zones()['A', 'Min'], 
+        max = Zones()['E', 'Max'],
+        value = Zones()['C', c('Min','Max')])
         ),
       wellPanel(
-        style =paste0('background: ', zones['D', 'Color'], ';'),
+        style =paste0('background: ', Zones()['D', 'Color'], ';'),
         sliderInput('zoneD', "Zone D",
-        min = zones['A', 'Min'], 
-        max = zones['E', 'Max'],
-        value = zones['D', c('Min','Max')])
+        min = Zones()['A', 'Min'], 
+        max = Zones()['E', 'Max'],
+        value = Zones()['D', c('Min','Max')])
         ),
         wellPanel(
-          style = paste0('background: ', zones['E', 'Color'], ';'),
+          style = paste0('background: ', Zones()['E', 'Color'], ';'),
           sliderInput('zoneE', "Zone E",
-        min = zones['A', 'Min'], 
-        max = zones['E', 'Max'],
-        value = zones['E', c('Min','Max')])
+        min = Zones()['A', 'Min'], 
+        max = Zones()['E', 'Max'],
+        value = Zones()['E', c('Min','Max')])
         )
       )
   })
@@ -65,31 +65,31 @@ function(input, output, session) {
     list(
     list(
       #label = list(text = "xxxx"),
-      color = zones['A', 'Color'],
+      color = Zones()['A', 'Color'],
       from = input$zoneA[1],
       to = input$zoneA[2]
     ),
     list(
       #label = list(text = "xxxx"),
-      color = zones['B', 'Color'],
+      color = Zones()['B', 'Color'],
       from = input$zoneB[1],
       to = input$zoneB[2]
     ),
     list(
       #label = list(text = "xxxx"),
-      color = zones['C', 'Color'],
+      color = Zones()['C', 'Color'],
       from = input$zoneC[1],
       to = input$zoneC[2]
     ),
     list(
       #label = list(text = "xxxx"),
-      color = zones['D', 'Color'],
+      color = Zones()['D', 'Color'],
       from = input$zoneD[1],
       to = input$zoneD[2]
     ),
     list(
       #label = list(text = "xxxx"),
-      color = zones['E', 'Color'],
+      color = Zones()['E', 'Color'],
       from = input$zoneE[1],
       to = input$zoneE[2]
     )
@@ -132,8 +132,8 @@ function(input, output, session) {
         )
       ) %>%
       hc_yAxis(
-        min = min(glycemie) - 20, 
-        max = max(glycemie) + 20, 
+        min = min(supersapiens$glycemie) - 20, 
+        max = max(supersapiens$glycemie) + 20, 
         title = list(text = "Glycémie (mg/dl)"),
         # plotLines = list(
         #   list(
@@ -151,7 +151,7 @@ function(input, output, session) {
         # ),
         plotBands = NULL
       ) %>%
-      hc_add_series(glycemie$source, type = "spline", color = 'blue') %>%
+      hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
       hc_annotations(
         list(
           labelOptions = list(
@@ -171,7 +171,7 @@ function(input, output, session) {
                   x = datetime_to_timestamp(as.POSIXct(unname(x['startdate']), format="%Y-%m-%d %H:%M")),
                   y = 200
                 ),
-                text = unname(x['source'])
+                text = unname(x['tag.description'])
               )
               
             })
@@ -181,25 +181,25 @@ function(input, output, session) {
   output$showRawData <- renderHighchart({
    
     if(input$showzones) 
-      hc <- GetRawData() %>% hc_yAxis(plotBands = viewzones())
+      hc <- GetRawData() %>% hc_yAxis(plotBands = viewZones())
     else
       GetRawData()
       
   })
   
   output$pga <- renderHighchart({
-    view_pga(df.mySuperSapiens$pga)
+    view_pga()
   })
   
   output$meanPerDay_UI <- renderHighchart({
     
-    hc <- meanPerDay %>% 
+    hc <- supersapiens_meanPerDay %>% 
       hchart(
         'column', 
         hcaes(x = day, y = source)) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'], colors = zones[, 'Color'])
+        dataClasses = color_classes(Zones()[, 'Max'], colors = Zones()[, 'Color'])
         )
     hc
   })
@@ -207,14 +207,14 @@ function(input, output, session) {
   
   output$meanPerHour_UI <- renderHighchart({
     
-    hc <- meanPerHour %>% 
+    hc <- supersapiens_meanPerHour %>% 
       hchart(
         'column', 
         hcaes(x = 'hour', y = 'source')) %>%
       hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'], colors = zones[, 'Color'])
+        dataClasses = color_classes(Zones()[, 'Max'], colors = Zones()[, 'Color'])
         )
     
     
@@ -226,8 +226,8 @@ function(input, output, session) {
   
   output$wholeRushes <- renderHighchart({
     hc <- highchart(type = "stock") %>%
-      hc_add_series(glycemie$rushes.pos, type = 'column', color = 'blue') %>%
-      hc_add_series(glycemie$rushes.neg, type = 'column', color = 'red') %>%
+      hc_add_series(supersapiens$rushes.pos, type = 'column', color = 'blue') %>%
+      hc_add_series(supersapiens$rushes.neg, type = 'column', color = 'red') %>%
       #hc_add_series(glycemie$rushes.pos, type = 'areaspline', color = 'lightblue') %>%
       #hc_add_series(glycemie$rushes.neg, type = 'areaspline', color = 'orange') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
@@ -250,15 +250,15 @@ function(input, output, session) {
     colorseq <- c(70, 90, 140, 250, 300)
     
     
-    hc <- variancePerDay %>% 
+    hc <- supersapiens_variancePerDay %>% 
       hchart(
         'column', 
         hcaes(x = 'day', y = 'source')) %>%
       #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'],
-          colors = zones[, 'Color']
+        dataClasses = color_classes(Zones()[, 'Max'],
+          colors = Zones()[, 'Color']
         ))
     hc
   })
@@ -271,15 +271,15 @@ function(input, output, session) {
     colorseq <- c(70, 90, 140, 250, 300)
     
     
-    hc <- variancePerHour %>% 
+    hc <- supersapiens_variancePerHour %>% 
       hchart(
         'column', 
         hcaes(x = 'hour', y = 'source')) %>%
       #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'],
-          colors = zones[, 'Color']
+        dataClasses = color_classes(Zones()[, 'Max'],
+          colors = Zones()[, 'Color']
         ))
     hc
   })
@@ -289,7 +289,7 @@ function(input, output, session) {
   output$timeInGlucoseZones <- renderHighchart({
     
     
-    per <- timeInZones$percentage
+    per <- supersapiens_timeInZones$percentage
 
     #colnames(per) <- c('< 70 mg/dl', '70-90 mg/dl','90-140 mg/dl','> 140 mg/dl')
     n <- nrow(per) * ncol(per)
@@ -314,7 +314,7 @@ function(input, output, session) {
         hcaes(x = 'day', y = 'percentage', group = 'zone'),
         stacking = "normal"
       ) %>%
-      hc_colors(zones[, 'Color']) %>%
+      hc_colors(Zones()[, 'Color']) %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'black')))
     
     
@@ -325,13 +325,13 @@ function(input, output, session) {
   output$heatmapPerHour <- renderHighchart({
     
     hc <- highchart() %>%
-      hc_add_series(data = heatmapPerHour, type = 'heatmap', 
+      hc_add_series(data = supersapiens_heatmapPerHour, type = 'heatmap', 
         hcaes(x = hour, y = day, value = source), 
         name = "Median Price",
         dataLabels = list(enabled = FALSE)) %>%
       hc_colorAxis(
-        dataClasses = color_classes(zones[, 'Max'],
-          colors = zones[, 'Color']
+        dataClasses = color_classes(Zones()[, 'Max'],
+          colors = Zones()[, 'Color']
         ))
     
     hc

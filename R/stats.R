@@ -1,5 +1,6 @@
 
 
+#' @title GetTimeInGlucoseZones
 #' @export
 GetTimeInGlucoseZones <- function(data){
   message('GetTimeInGlucoseZones()...')
@@ -60,6 +61,7 @@ GetTimeInGlucoseZones <- function(data){
 
 
 
+#' @title FindGlucoseRushes
 #' @export
 FindGlucoseRushes <- function(df, th = 10){
   message('FindGlucoseRushes()...')

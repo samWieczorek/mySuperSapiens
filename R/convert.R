@@ -1,3 +1,4 @@
+#' @title BuildData
 #' @export
 BuildData  <- function(path){
   path <- '../../../Documents/Personnel/Suivi Glycemie'
@@ -113,7 +114,7 @@ df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
 
 df.supersapiens_xts$glycemie <- as.numeric(df.supersapiens_xts$glycemie)
 
-supersapiens_supersapiens_xts <- df.supersapiens_xts
+supersapiens <- df.supersapiens_xts
 
 
 supersapiens_meanPerDay <- GetMeanPerDay(df.supersapiens_xts$glycemie)
@@ -125,7 +126,7 @@ supersapiens_pga <- Compute_PGA(df.supersapiens_xts$glycemie)
 supersapiens_heatmapPerHour <- GetHeatmapPerHour(df.supersapiens_xts$glycemie)
 
 save(
-  supersapiens_supersapiens_xts, 
+  supersapiens, 
   supersapiens_meanPerDay, 
   supersapiens_meanPerHour,
   supersapiens_variancePerDay, 
@@ -138,7 +139,8 @@ save(
 }
 
 
-
+#' @title BuildFitData
+#' @export
 BuildFitData <- function(){
   
   path <- '../../../Documents/Personnel/Suivi Glycemie/'
@@ -151,6 +153,7 @@ BuildFitData <- function(){
 
 }
 
+#' @title BuildFitData
 #' @export
 ComputeLineEq <- function(t1, v1, t2, v2){
   # Convert times in seconds
@@ -161,6 +164,7 @@ ComputeLineEq <- function(t1, v1, t2, v2){
   list(a = a, b = b)
 }
 
+#' @title BuildFitData
 #' @export
 Discretise <- function(df){
   
@@ -200,7 +204,8 @@ Discretise <- function(df){
   additionalData
 }
 
-
+#' @title BuildFitData
+#' @export
 Fix_tags <- function(df){
   df[15, 'tag.type'] <- 'Alimentation'
   
