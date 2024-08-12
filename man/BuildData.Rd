@@ -4,7 +4,7 @@
 \alias{BuildData}
 \title{BuildData}
 \usage{
-BuildData(path)
+BuildData(filepath, timeoffset = 20)
 }
 \description{
 BuildData

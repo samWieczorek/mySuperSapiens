@@ -1,9 +1,9 @@
 #' @title BuildData
 #' @export
-BuildData  <- function(path){
+BuildData  <- function(filepath, timeoffset = 20){
   path <- '../../../Documents/Personnel/Suivi Glycemie'
-glucose.file <- file.path(path, 'glucose.csv')
-lines <- readLines(glucose.file)
+  filepath <- file.path(path, 'glucose.csv')
+lines <- readLines(filepath)
 lines <- lines[-c(1:2)]
 
 date <- date.tags <- NULL

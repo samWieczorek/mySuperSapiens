@@ -95,100 +95,24 @@ function(input, output, session) {
     )
   )
 })
-  GetRawData <- reactive({
-    highchart(type = "stock") %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
-      hc_add_dependency(name = "modules/annotations.js") %>%
-      hc_xAxis(
-        labels = list(format = '{value:%Y/%m/%d %H:%M}'),
-        options = list(
-          timezoneOffset = 2
-        ),
-        plotBands = list(
-          list(
-            label = list(text = "2024-08-02"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-04"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-06"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-08"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
-          )
-        )
-      ) %>%
-      hc_yAxis(
-        min = min(supersapiens$glycemie) - 20, 
-        max = max(supersapiens$glycemie) + 20, 
-        title = list(text = "Glycémie (mg/dl)"),
-        # plotLines = list(
-        #   list(
-        #     #label = list(text = "Limite hypoglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 70
-        #   ),
-        #   list(
-        #     #label = list(text = "Limite hyperglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 250
-        #   )
-        # ),
-        plotBands = NULL
-      ) %>%
-      hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
-      hc_annotations(
-        list(
-          labelOptions = list(
-            backgroundColor = 'rgba(255,255,255,0.6)',
-            verticalAlign = 'top',
-            y = 15
-          ),
-          
-          labels = 
-            
-            apply(tags, 1, function(x){
-              
-              list(
-                point = list(
-                  xAxis = 0,
-                  yAxis = 0,
-                  x = datetime_to_timestamp(as.POSIXct(unname(x['startdate']), format="%Y-%m-%d %H:%M")),
-                  y = 200
-                ),
-                text = unname(x['tag.description'])
-              )
-              
-            })
-        ))
-  })
-  
+
   output$showRawData <- renderHighchart({
    
     if(input$showzones) 
-      hc <- GetRawData() %>% hc_yAxis(plotBands = viewZones())
+      hc <- view_RawData(supersapiens) %>% hc_yAxis(plotBands = viewzones())
     else
-      GetRawData()
+      view_RawData(supersapiens)
       
   })
   
   output$pga <- renderHighchart({
-    view_pga(supersapiens_pga)
+    view_pga(supersapiens_pga) %>%
+      hc_yAxis(
+        min = min(supersapiens_pga[,2:6]), 
+        max = max(supersapiens_pga[,2:6]), 
+        title = list(text = "Glycémie (mg/dl)"),
+        plotBands = viewzones()
+      )
   })
   
   output$meanPerDay_UI <- renderHighchart({
@@ -197,36 +121,18 @@ function(input, output, session) {
   
   
   output$meanPerHour_UI <- renderHighchart({
-    view_MeanPerDay(supersapiens_meanPerHour)
+    view_MeanPerHour(supersapiens_meanPerHour)
   })
   
-  
-  
+
   output$wholeRushes <- renderHighchart({
-    hc <- highchart(type = "stock") %>%
-      hc_add_series(supersapiens$rushes.pos, type = 'column', color = 'blue') %>%
-      hc_add_series(supersapiens$rushes.neg, type = 'column', color = 'red') %>%
-      #hc_add_series(glycemie$rushes.pos, type = 'areaspline', color = 'lightblue') %>%
-      #hc_add_series(glycemie$rushes.neg, type = 'areaspline', color = 'orange') %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-      hc_xAxis(
-        labels = list(format = '{value:%Y/%m/%d %H:%M}'),
-        options = list(
-          timezoneOffset = 2
-        )
-      )
-    
-    hc
-    
+    view_wholeRushes(supersapiens)
   })
-  
-  
   
   output$variancePerDay_UI <- renderHighchart({
     view_VariancePerDay(supersapiens_variancePerDay)
   })
   
-
   output$variancePerHour_UI <- renderHighchart({
     view_VariancePerHour(supersapiens_variancePerHour)
   })

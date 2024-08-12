@@ -32,12 +32,6 @@ view_pga <- function(df){
     color = "#dfe3ed",  ## put a semi transparent color
     zIndex = -3 ## this is for put the series in a back so the points are showed first
   ) %>%
-  hc_yAxis(
-    min = min(df[,2:6]), 
-    max = max(df[,2:6]), 
-    title = list(text = "Glycémie (mg/dl)"),
-    plotBands = viewzones()
-  ) %>%
   hc_plotOptions(
     series = list(
       marker = list(
@@ -108,9 +102,8 @@ view_VariancePerDay <- function(df){
   
   
   hc <- df %>% 
-    hchart(
-      'column', 
-      hcaes(x = 'day', y = 'source')) %>%
+    hchart('column', 
+      hcaes(x = day, y = glycemie)) %>%
     #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
     hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
     hc_colorAxis(
@@ -130,7 +123,7 @@ view_VariancePerHour <- function(df){
   hc <- df %>% 
     hchart(
       'column', 
-      hcaes(x = 'hour', y = 'source')) %>%
+      hcaes(x = hour, y = glycemie)) %>%
     #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
     hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
     hc_colorAxis(
@@ -182,7 +175,7 @@ view_timeInGlucoseZones <- function(df){
 view_heatmapPerHour <- function(df){
 hc <- highchart() %>%
   hc_add_series(data = df, type = 'heatmap', 
-    hcaes(x = hour, y = day, value = source), 
+    hcaes(x = hour, y = day, value = glycemie), 
     name = "Median Price",
     dataLabels = list(enabled = FALSE)) %>%
   hc_colorAxis(
@@ -191,4 +184,112 @@ hc <- highchart() %>%
     ))
 
 hc
+}
+
+
+#' @title View whole rushes 
+#' @export
+view_wholeRushes <- function(df){
+hc <- highchart(type = "stock") %>%
+  hc_add_series(df$rushes.pos, type = 'column', color = 'blue') %>%
+  hc_add_series(df$rushes.neg, type = 'column', color = 'red') %>%
+  #hc_add_series(glycemie$rushes.pos, type = 'areaspline', color = 'lightblue') %>%
+  #hc_add_series(glycemie$rushes.neg, type = 'areaspline', color = 'orange') %>%
+  hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
+  hc_xAxis(
+    labels = list(format = '{value:%Y/%m/%d %H:%M}'),
+    options = list(
+      timezoneOffset = 2
+    )
+  )
+
+hc
+}
+
+
+#' @title View raw data 
+#' @export
+view_RawData <- function(df){
+
+    highchart(type = "stock") %>%
+      hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
+      hc_add_dependency(name = "modules/annotations.js") %>%
+      hc_xAxis(
+        labels = list(format = '{value:%Y/%m/%d %H:%M}'),
+        options = list(
+          timezoneOffset = 2
+        ),
+        plotBands = list(
+          list(
+            label = list(text = "2024-08-02"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-04"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-06"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-08"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
+          )
+        )
+      ) %>%
+      hc_yAxis(
+        min = min(df$glycemie) - 20, 
+        max = max(df$glycemie) + 20, 
+        title = list(text = "Glycémie (mg/dl)"),
+        # plotLines = list(
+        #   list(
+        #     #label = list(text = "Limite hypoglycémie"),
+        #     color = "#000000",
+        #     width = 0.5,
+        #     value = 70
+        #   ),
+        #   list(
+        #     #label = list(text = "Limite hyperglycémie"),
+        #     color = "#000000",
+        #     width = 0.5,
+        #     value = 250
+        #   )
+        # ),
+        plotBands = NULL
+      ) %>%
+      hc_add_series(as.numeric(df$glycemie), type = "spline", color = 'blue') 
+      # hc_annotations(
+      #   list(
+      #     labelOptions = list(
+      #       backgroundColor = 'rgba(255,255,255,0.6)',
+      #       verticalAlign = 'top',
+      #       y = 15
+      #     ),
+      #     
+      #     labels = 
+      #       
+      #       apply(df$tags, 1, function(x){
+      #         
+      #         list(
+      #           point = list(
+      #             xAxis = 0,
+      #             yAxis = 0,
+      #             x = datetime_to_timestamp(as.POSIXct(unname(x['date']), format="%Y-%m-%d %H:%M")),
+      #             y = 200
+      #           ),
+      #           text = unname(x['tag.description'])
+      #         )
+      #         
+      #       })
+      #   ))
+  
 }
