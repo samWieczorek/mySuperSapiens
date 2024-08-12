@@ -1,6 +1,9 @@
 #' @title BuildData
 #' @export
 BuildData  <- function(filepath, timeoffset = 20){
+  
+  options(xts_check_TZ = FALSE)
+  
   path <- '../../../Documents/Personnel/Suivi Glycemie'
   filepath <- file.path(path, 'glucose.csv')
 lines <- readLines(filepath)
@@ -14,13 +17,21 @@ message('Build original dataset')
 splitted <- NULL
 for (i in seq(length(lines))){
   splitted <- unlist(strsplit(lines[i], split = ','))
-  .date <- strptime(splitted[3], format="%d-%m-%Y %H:%M")
-  .date <- as.character(as.POSIXct(.date, format = "%Y-%m-%d %H:%M"))
+  .date <- as.character(splitted[3])
+  tmp <- unlist( strsplit(.date, "[-\\s \\s:]+"))
+    year <- as.character(tmp[3])
+  month <- as.character(tmp[2])
+  day <- as.character(tmp[1])
+  hour <- as.character(tmp[4])
+  minute <-as.character(tmp[5])
+  #browser()
+  .date <- paste0(year, '-', month, '-', day, ' ', hour, ':', minute)
+
   type.info <- as.numeric(splitted[4])
   glycemie.val <- as.numeric(splitted[5])
   num.glycemie <- as.numeric(splitted[6])
   tags <- splitted[14]
-  
+ 
   if (type.info == 0){
     date <- c(date, .date)
     df.glycemie <- c(df.glycemie, as.numeric(glycemie.val))
@@ -42,88 +53,79 @@ for (i in seq(length(lines))){
 
 }
 
-
+date <- as.POSIXct(format(date, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
 # basic data.frame
-df.supersapiens <- data.frame(
-  date = date, 
-  glycemie = as.numeric(df.glycemie)
-)
+df.supersapiens <- data.frame(date, glycemie = df.glycemie)
+
+
 df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
-glycemie.orig <- df.supersapiens
 
 message('Discretise dataset...')
 new.data <- Discretise(df.supersapiens)
+
+
 df.supersapiens <- rbind(df.supersapiens, new.data)
-df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+#df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
 
 
 #add columns to this final data.frame
 message('Adding new columns to dataset...')
 df.supersapiens <- cbind(df.supersapiens, 
-  tag.type = rep('', nrow(df.supersapiens)),
-  tag.description = rep('', nrow(df.supersapiens)),
-  tag.description2 = rep('', nrow(df.supersapiens))
-  # fit.heart.rate = rep(0, nrow(df.supersapiens)),
-  # fit.distance = rep(0, nrow(df.supersapiens)),
-  # fit.enhanced.speed = rep(0, nrow(df.supersapiens)),
-  # fit.enhanced.altitude = rep(0, nrow(df.supersapiens)),
-  # fit.denivele = rep(0, nrow(df.supersapiens))
+  rushes.pos = rep(0, nrow(df.supersapiens)),
+  rushes.neg = rep(0, nrow(df.supersapiens))
   )
+message('Convert dataset to xts format...')
+df.supersapiens <- xts::xts(df.supersapiens[-1],  order.by = date)
 
 
-message('Adding tags to dataset...')
-for (d in seq(length(date.tags))){
-  ind <- which(df.supersapiens$date == date.tags[d])
-  df.supersapiens[ind, 'tag.description'] <- source.tags[d]
-}
+# ,
+#   tag.type = rep('', nrow(df.supersapiens)),
+#   tag.description = rep('', nrow(df.supersapiens)),
+#   tag.description2 = rep('', nrow(df.supersapiens))
+#   )
 
-message('Fixing missing values in tags...')
-df.supersapiens <- Fix_tags(df.supersapiens)
+# 
+# message('Adding tags to dataset...')
+# for (d in seq(length(date.tags))){
+#   ind <- which(df.supersapiens$date == date.tags[d])
+#   df.supersapiens[ind, 'tag.description'] <- source.tags[d]
+# }
+
+
+
+# message('Fixing missing values in tags...')
+# df.supersapiens <- Fix_tags(df.supersapiens)
 
 #Compute rushes
 message('Compute rushes...')
-rushes.pos <- rushes.neg <- rep(0, nrow(df.supersapiens))
+
 th <- 10
+
 
 for (i in seq((nrow(df.supersapiens) - 5))){
   diffval <- as.numeric(df.supersapiens[i+5, 'glycemie']) - as.numeric(df.supersapiens[i, 'glycemie'])
   
   if (diffval >= th)
-    rushes.pos[i] <- as.numeric(diffval)
+    df.supersapiens$rushes.pos[i] <- as.numeric(diffval)
   else if (diffval <= -th)
-    rushes.neg[i] <- as.numeric(diffval)
+    df.supersapiens$rushes.neg[i] <- as.numeric(diffval)
 }
 
-df.supersapiens <- cbind(
-  df.supersapiens, 
-  rushes.pos = rushes.pos, 
-  rushes.neg = rushes.neg)
 
 
 message('Ordering dataset by datetime...')
-df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+#df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
 
 
+supersapiens_meanPerDay <- GetMeanPerDay(df.supersapiens$glycemie)
+supersapiens_meanPerHour <- GetMeanPerHour(df.supersapiens$glycemie)
+supersapiens_variancePerDay <- GetVariancePerDay(df.supersapiens$glycemie)
+supersapiens_variancePerHour <- GetVariancePerHour(df.supersapiens$glycemie)
 
+supersapiens_timeInZones <-  GetTimeInGlucoseZones(df.supersapiens$glycemie)
 
-message('Convert dataset to xts format...')
-df.supersapiens_xts <- xts::xts(df.supersapiens[-1],
-  order.by = as.POSIXct(
-    df.supersapiens$date,
-    format="%Y-%m-%d %H:%M"))
-
-df.supersapiens_xts$glycemie <- as.numeric(df.supersapiens_xts$glycemie)
-
-supersapiens <- df.supersapiens_xts
-
-
-supersapiens_meanPerDay <- GetMeanPerDay(df.supersapiens_xts$glycemie)
-supersapiens_meanPerHour <- GetMeanPerHour(df.supersapiens_xts$glycemie)
-supersapiens_variancePerDay <- GetVariancePerDay(df.supersapiens_xts$glycemie)
-supersapiens_variancePerHour <- GetVariancePerHour(df.supersapiens_xts$glycemie)
-supersapiens_timeInZones <-  GetTimeInGlucoseZones(df.supersapiens_xts$glycemie)
-supersapiens_pga <- Compute_PGA(df.supersapiens_xts$glycemie)
-supersapiens_heatmapPerHour <- GetHeatmapPerHour(df.supersapiens_xts$glycemie)
+supersapiens_pga <- Compute_PGA(df.supersapiens$glycemie)
+supersapiens_heatmapPerHour <- GetHeatmapPerHour(df.supersapiens$glycemie)
 
 save(
   supersapiens, 
@@ -140,6 +142,9 @@ save(
 
 
 #' @title BuildFitData
+#' @examples
+#' BuildFitData()
+#' 
 #' @export
 BuildFitData <- function(){
   
@@ -170,6 +175,7 @@ Discretise <- function(df){
   
   date <- glycemie <- c()
   
+
   for (i in seq(nrow(df)-1)){
     
     first <- df[i, ]
@@ -177,30 +183,34 @@ Discretise <- function(df){
     
     value1 <- first$glycemie
     value2 <- second$glycemie
-    day1 <- strptime(first$date, format = '%Y-%m-%d')
-    day2 <- strptime(second$date, format = '%Y-%m-%d')
-    time1 <- as.POSIXct(first$date, format = '%Y-%m-%d %H:%M')
-    time2 <- strptime(second$date, format = '%Y-%m-%d %H:%M')
+    time1 <- index(first)
+    time2 <- index(second)
     
-    nbMinutes <- abs(as.integer(difftime(time1, time2, units="mins")))
+    nbMinutes <- abs(as.integer(difftime(time1, time2, units = "mins")))
     
     coeff <- ComputeLineEq(
       t1 = time1, 
-      v1 = value1, 
+      v1 = as.numeric(value1), 
       t2 = time2, 
-      v2 = value2)
+      v2 = as.numeric(value2)
+      )
     
     if (nbMinutes > 1) {
-      for (mins in seq(nbMinutes-1)){
+      for (mins in seq(nbMinutes - 1)){
         new.time <- time1 + mins * 60
         new.value <- coeff$a * (mins * 60) + coeff$b
-        date <- c(date, format(as.POSIXct(new.time, format = '%Y-%m-%d %H:%M'), format = '%Y-%m-%d %H:%M:%S'))
+        #browser()
+        date <- c(date, format(as.POSIXct(new.time, format = '%Y-%m-%d %H:%M'), format = '%Y-%m-%d %H:%M'))
+        #date <- c(date, as.POSIXct(new.time, format = '%Y-%m-%d %H:%M', tz = 'Europe/Paris'))
         glycemie <- c(glycemie, new.value)
       }
     }
   }
   
-  additionalData <- data.frame(date = date, glycemie = glycemie)
+  #date <- as.POSIXct(format(date, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
+  #browser()
+  additionalData <- data.frame(date, glycemie)
+ 
   additionalData
 }
 

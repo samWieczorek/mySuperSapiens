@@ -4,15 +4,13 @@
 #' @export
 GetTimeInGlucoseZones <- function(data){
   message('GetTimeInGlucoseZones()...')
-  
+ 
   diffTime <- function(first, second){
     earlier <- as.POSIXct(strptime(first, "%Y-%m-%d %H:%M"))
     later <- as.POSIXct(strptime(second, "%Y-%m-%d %H:%M"))
     later - earlier
   }
-  
-  
-  
+
   df <- zoo::fortify.zoo(data)
   
   ll.days <- unique(strptime(df[, 'Index'], format = '%Y-%m-%d'))
@@ -85,11 +83,12 @@ FindGlucoseRushes <- function(df, th = 10){
 #' @export
 Compute_PGA <- function(df){
   message('Compute_PGA()...')
+  
   df <- zoo::fortify.zoo(df)
   df$hour <- as.numeric(format(df$Index, "%H"))
   df$glycemie <- as.numeric(df$glycemie)
   
-  
+
   #group by hours in time column and calculate sum of sales
   #pga <- aggregate(as.numeric(glycemie) ~ hour, df, quantile)
   

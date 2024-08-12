@@ -97,11 +97,12 @@ function(input, output, session) {
 })
 
   output$showRawData <- renderHighchart({
-   
+    hc <- view_RawData(supersapiens) 
+    
     if(input$showzones) 
-      hc <- view_RawData(supersapiens) %>% hc_yAxis(plotBands = viewzones())
-    else
-      view_RawData(supersapiens)
+      hc %>% hc_yAxis(plotBands = viewzones())
+    
+    hc
       
   })
   

@@ -211,85 +211,90 @@ hc
 #' @export
 view_RawData <- function(df){
 
-    highchart(type = "stock") %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
-      hc_add_dependency(name = "modules/annotations.js") %>%
+  df1 <- zoo::fortify.zoo(df)
+  highchart(type = "stock") %>%
+      #hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
+      #hc_add_dependency(name = "modules/annotations.js") %>%
+    hc_add_series(as.numeric(supersapiens$glycemie), type = "spline", color = 'blue') %>%
       hc_xAxis(
-        labels = list(format = '{value:%Y/%m/%d %H:%M}'),
-        options = list(
-          timezoneOffset = 2
-        ),
-        plotBands = list(
-          list(
-            label = list(text = "2024-08-02"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-04"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-06"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
-          ),
-          list(
-            label = list(text = "2024-08-08"),
-            color = "rgba(100, 0, 0, 0.05)",
-            from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
-            to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
-          )
+        labels = list(format = '{value:%Y/%m/%d %H:%M}')
         )
-      ) %>%
-      hc_yAxis(
-        min = min(as.numeric(df$glycemie)) - 20, 
-        max = max(as.numeric(df$glycemie)) + 20, 
-        title = list(text = "Glycémie (mg/dl)"),
-        # plotLines = list(
-        #   list(
-        #     #label = list(text = "Limite hypoglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 70
-        #   ),
-        #   list(
-        #     #label = list(text = "Limite hyperglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 250
-        #   )
-        # ),
-        plotBands = NULL
-      ) %>%
-      hc_add_series(as.numeric(df$glycemie), type = "spline", color = 'blue') 
-      # hc_annotations(
-      #   list(
-      #     labelOptions = list(
-      #       backgroundColor = 'rgba(255,255,255,0.6)',
-      #       verticalAlign = 'top',
-      #       y = 15
-      #     ),
-      #     
-      #     labels = 
-      #       
-      #       apply(df$tags, 1, function(x){
-      #         
-      #         list(
-      #           point = list(
-      #             xAxis = 0,
-      #             yAxis = 0,
-      #             x = datetime_to_timestamp(as.POSIXct(unname(x['date']), format="%Y-%m-%d %H:%M")),
-      #             y = 200
-      #           ),
-      #           text = unname(x['tag.description'])
-      #         )
-      #         
-      #       })
-      #   ))
+  # 
+  # ,
+  #       # options = list(
+  #       #   timezoneOffset = 2
+  #       # ),
+  #       plotBands = list(
+  #         list(
+  #           label = list(text = "2024-08-02"),
+  #           color = "rgba(100, 0, 0, 0.05)",
+  #           from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
+  #           to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
+  #         ),
+  #         list(
+  #           label = list(text = "2024-08-04"),
+  #           color = "rgba(100, 0, 0, 0.05)",
+  #           from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
+  #           to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
+  #         ),
+  #         list(
+  #           label = list(text = "2024-08-06"),
+  #           color = "rgba(100, 0, 0, 0.05)",
+  #           from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
+  #           to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
+  #         ),
+  #         list(
+  #           label = list(text = "2024-08-08"),
+  #           color = "rgba(100, 0, 0, 0.05)",
+  #           from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
+  #           to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
+  #         )
+  #       )
+  #     )
+  #     # hc_yAxis(
+  #     #   min = min(as.numeric(df$glycemie)) - 20, 
+  #     #   max = max(as.numeric(df$glycemie)) + 20, 
+  #     #   title = list(text = "Glycémie (mg/dl)"),
+  #     #   # plotLines = list(
+  #     #   #   list(
+  #     #   #     #label = list(text = "Limite hypoglycémie"),
+  #     #   #     color = "#000000",
+  #     #   #     width = 0.5,
+  #     #   #     value = 70
+  #     #   #   ),
+  #     #   #   list(
+  #     #   #     #label = list(text = "Limite hyperglycémie"),
+  #     #   #     color = "#000000",
+  #     #   #     width = 0.5,
+  #     #   #     value = 250
+  #     #   #   )
+  #     #   # ),
+  #     #   plotBands = NULL
+  #     # ) %>%
+  # 
+  #     # hc_annotations(
+  #     #   list(
+  #     #     labelOptions = list(
+  #     #       backgroundColor = 'rgba(255,255,255,0.6)',
+  #     #       verticalAlign = 'top',
+  #     #       y = 15
+  #     #     ),
+  #     #     
+  #     #     labels = 
+  #     #       
+  #     #       apply(df$tags, 1, function(x){
+  #     #         
+  #     #         list(
+  #     #           point = list(
+  #     #             xAxis = 0,
+  #     #             yAxis = 0,
+  #     #             x = datetime_to_timestamp(as.POSIXct(unname(x['date']), format="%Y-%m-%d %H:%M")),
+  #     #             y = 200
+  #     #           ),
+  #     #           text = unname(x['tag.description'])
+  #     #         )
+  #     #         
+  #     #       })
+  #     #   ))
   
 }

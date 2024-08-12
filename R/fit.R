@@ -24,7 +24,7 @@ ConvertFitFile <- function(path, name){
    fit_xts <- xts::xts(fit[-1],
      order.by = as.POSIXct(
        fit$date,
-       format="%Y-%m-%d %H:%M"))
+       format="%Y-%m-%d %H:%M:%S"))
    
    assign(filename, fit_xts)
    eval(parse(text = paste0("save('", filename, "', file = 'data/",filename,".RData')")))
