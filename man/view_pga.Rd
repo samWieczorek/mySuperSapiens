@@ -4,7 +4,7 @@
 \alias{view_pga}
 \title{Profil Glucidique Ambulatoire}
 \usage{
-view_pga()
+view_pga(df)
 }
 \description{
 Profil Glucidique Ambulatoire

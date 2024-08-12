@@ -188,38 +188,16 @@ function(input, output, session) {
   })
   
   output$pga <- renderHighchart({
-    view_pga()
+    view_pga(supersapiens_pga)
   })
   
   output$meanPerDay_UI <- renderHighchart({
-    
-    hc <- supersapiens_meanPerDay %>% 
-      hchart(
-        'column', 
-        hcaes(x = day, y = source)) %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-      hc_colorAxis(
-        dataClasses = color_classes(Zones()[, 'Max'], colors = Zones()[, 'Color'])
-        )
-    hc
+    view_MeanPerDay(supersapiens_meanPerDay)
   })
   
   
   output$meanPerHour_UI <- renderHighchart({
-    
-    hc <- supersapiens_meanPerHour %>% 
-      hchart(
-        'column', 
-        hcaes(x = 'hour', y = 'source')) %>%
-      hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-      hc_colorAxis(
-        dataClasses = color_classes(Zones()[, 'Max'], colors = Zones()[, 'Color'])
-        )
-    
-    
-    hc
-    
+    view_MeanPerDay(supersapiens_meanPerHour)
   })
   
   
@@ -245,97 +223,21 @@ function(input, output, session) {
   
   
   output$variancePerDay_UI <- renderHighchart({
-    
-    colfunc <- colorRampPalette(c("#f95c75", "#653fc6"))
-    colorseq <- c(70, 90, 140, 250, 300)
-    
-    
-    hc <- supersapiens_variancePerDay %>% 
-      hchart(
-        'column', 
-        hcaes(x = 'day', y = 'source')) %>%
-      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-      hc_colorAxis(
-        dataClasses = color_classes(Zones()[, 'Max'],
-          colors = Zones()[, 'Color']
-        ))
-    hc
+    view_VariancePerDay(supersapiens_variancePerDay)
   })
   
-  
-  
-  output$variancePerHour_UI <- renderHighchart({
-    
-    colfunc <- colorRampPalette(c("#f95c75", "#653fc6"))
-    colorseq <- c(70, 90, 140, 250, 300)
-    
-    
-    hc <- supersapiens_variancePerHour %>% 
-      hchart(
-        'column', 
-        hcaes(x = 'hour', y = 'source')) %>%
-      #hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-      hc_colorAxis(
-        dataClasses = color_classes(Zones()[, 'Max'],
-          colors = Zones()[, 'Color']
-        ))
-    hc
-  })
-  
-  
-  
-  output$timeInGlucoseZones <- renderHighchart({
-    
-    
-    per <- supersapiens_timeInZones$percentage
 
-    #colnames(per) <- c('< 70 mg/dl', '70-90 mg/dl','90-140 mg/dl','> 140 mg/dl')
-    n <- nrow(per) * ncol(per)
-    df <- data.frame(
-      day = NULL, 
-      zone = NULL, 
-      percentage = NULL)
-    
-    for (i in seq(nrow(per)))
-      for (j in seq(ncol(per)))
-        df <- rbind(df, c(rownames(per)[i], colnames(per)[j], 100*as.numeric(per[i, j])))
-    
-    
-    df <- as.data.frame(df)
-    colnames(df) <- c('day', 'zone', 'percentage')
-    df[,'percentage'] <- as.numeric(df[,'percentage'])
-    
-    
-    hc <- df %>% 
-      hchart(
-        'column', 
-        hcaes(x = 'day', y = 'percentage', group = 'zone'),
-        stacking = "normal"
-      ) %>%
-      hc_colors(Zones()[, 'Color']) %>%
-      hc_add_theme(hc_theme(chart = list(backgroundColor = 'black')))
-    
-    
-    hc
+  output$variancePerHour_UI <- renderHighchart({
+    view_VariancePerHour(supersapiens_variancePerHour)
+  })
+
+  output$timeInGlucoseZones <- renderHighchart({
+    view_timeInGlucoseZones(supersapiens_timeInZones)
   })
   
   
   output$heatmapPerHour <- renderHighchart({
-    
-    hc <- highchart() %>%
-      hc_add_series(data = supersapiens_heatmapPerHour, type = 'heatmap', 
-        hcaes(x = hour, y = day, value = source), 
-        name = "Median Price",
-        dataLabels = list(enabled = FALSE)) %>%
-      hc_colorAxis(
-        dataClasses = color_classes(Zones()[, 'Max'],
-          colors = Zones()[, 'Color']
-        ))
-    
-    hc
-    
+    view_heatmapPerHour(supersapiens_heatmapPerHour)
   })
 }
 
