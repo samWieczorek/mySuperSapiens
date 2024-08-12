@@ -247,8 +247,8 @@ view_RawData <- function(df){
         )
       ) %>%
       hc_yAxis(
-        min = min(df$glycemie) - 20, 
-        max = max(df$glycemie) + 20, 
+        min = min(as.numeric(df$glycemie)) - 20, 
+        max = max(as.numeric(df$glycemie)) + 20, 
         title = list(text = "Glycémie (mg/dl)"),
         # plotLines = list(
         #   list(
