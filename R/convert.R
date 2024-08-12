@@ -55,46 +55,46 @@ for (i in seq(length(lines))){
 
 date <- as.POSIXct(format(date, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
 # basic data.frame
-df.supersapiens <- data.frame(date, glycemie = df.glycemie)
+supersapiens <- data.frame(date, glycemie = df.glycemie)
 
 
-df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+supersapiens <- supersapiens[order(supersapiens$date),]
 
 message('Discretise dataset...')
-new.data <- Discretise(df.supersapiens)
+new.data <- Discretise(supersapiens)
 
 
-df.supersapiens <- rbind(df.supersapiens, new.data)
-#df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+supersapiens <- rbind(supersapiens, new.data)
+#supersapiens <- supersapiens[order(supersapiens$date),]
 
 
 #add columns to this final data.frame
 message('Adding new columns to dataset...')
-df.supersapiens <- cbind(df.supersapiens, 
-  rushes.pos = rep(0, nrow(df.supersapiens)),
-  rushes.neg = rep(0, nrow(df.supersapiens))
+supersapiens <- cbind(supersapiens, 
+  rushes.pos = rep(0, nrow(supersapiens)),
+  rushes.neg = rep(0, nrow(supersapiens))
   )
 message('Convert dataset to xts format...')
-df.supersapiens <- xts::xts(df.supersapiens[-1],  order.by = date)
+supersapiens <- xts::xts(supersapiens[-1],  order.by = date)
 
 
 # ,
-#   tag.type = rep('', nrow(df.supersapiens)),
-#   tag.description = rep('', nrow(df.supersapiens)),
-#   tag.description2 = rep('', nrow(df.supersapiens))
+#   tag.type = rep('', nrow(supersapiens)),
+#   tag.description = rep('', nrow(supersapiens)),
+#   tag.description2 = rep('', nrow(supersapiens))
 #   )
 
 # 
 # message('Adding tags to dataset...')
 # for (d in seq(length(date.tags))){
-#   ind <- which(df.supersapiens$date == date.tags[d])
-#   df.supersapiens[ind, 'tag.description'] <- source.tags[d]
+#   ind <- which(supersapiens$date == date.tags[d])
+#   supersapiens[ind, 'tag.description'] <- source.tags[d]
 # }
 
 
 
 # message('Fixing missing values in tags...')
-# df.supersapiens <- Fix_tags(df.supersapiens)
+# supersapiens <- Fix_tags(supersapiens)
 
 #Compute rushes
 message('Compute rushes...')
@@ -102,30 +102,30 @@ message('Compute rushes...')
 th <- 10
 
 
-for (i in seq((nrow(df.supersapiens) - 5))){
-  diffval <- as.numeric(df.supersapiens[i+5, 'glycemie']) - as.numeric(df.supersapiens[i, 'glycemie'])
+for (i in seq((nrow(supersapiens) - 5))){
+  diffval <- as.numeric(supersapiens[i+5, 'glycemie']) - as.numeric(supersapiens[i, 'glycemie'])
   
   if (diffval >= th)
-    df.supersapiens$rushes.pos[i] <- as.numeric(diffval)
+    supersapiens$rushes.pos[i] <- as.numeric(diffval)
   else if (diffval <= -th)
-    df.supersapiens$rushes.neg[i] <- as.numeric(diffval)
+    supersapiens$rushes.neg[i] <- as.numeric(diffval)
 }
 
 
 
 message('Ordering dataset by datetime...')
-#df.supersapiens <- df.supersapiens[order(df.supersapiens$date),]
+#supersapiens <- supersapiens[order(supersapiens$date),]
 
 
-supersapiens_meanPerDay <- GetMeanPerDay(df.supersapiens$glycemie)
-supersapiens_meanPerHour <- GetMeanPerHour(df.supersapiens$glycemie)
-supersapiens_variancePerDay <- GetVariancePerDay(df.supersapiens$glycemie)
-supersapiens_variancePerHour <- GetVariancePerHour(df.supersapiens$glycemie)
+supersapiens_meanPerDay <- GetMeanPerDay(supersapiens$glycemie)
+supersapiens_meanPerHour <- GetMeanPerHour(supersapiens$glycemie)
+supersapiens_variancePerDay <- GetVariancePerDay(supersapiens$glycemie)
+supersapiens_variancePerHour <- GetVariancePerHour(supersapiens$glycemie)
 
-supersapiens_timeInZones <-  GetTimeInGlucoseZones(df.supersapiens$glycemie)
+supersapiens_timeInZones <-  GetTimeInGlucoseZones(supersapiens$glycemie)
 
-supersapiens_pga <- Compute_PGA(df.supersapiens$glycemie)
-supersapiens_heatmapPerHour <- GetHeatmapPerHour(df.supersapiens$glycemie)
+supersapiens_pga <- Compute_PGA(supersapiens$glycemie)
+supersapiens_heatmapPerHour <- GetHeatmapPerHour(supersapiens$glycemie)
 
 save(
   supersapiens, 
@@ -214,11 +214,11 @@ Discretise <- function(df){
   additionalData
 }
 
-#' @title BuildFitData
-#' @export
-Fix_tags <- function(df){
-  df[15, 'tag.type'] <- 'Alimentation'
-  
-  
-  df
-}
+#' #' @title BuildFitData
+#' #' @export
+#' Fix_tags <- function(df){
+#'   df[15, 'tag.type'] <- 'Alimentation'
+#'   
+#'   
+#'   df
+#' }
