@@ -2,7 +2,7 @@ function(input, output, session) {
   
  
   data(supersapiens)
-  
+   
   output$zones_UI <- renderUI({
     tagList(
       # All your styles will go here
@@ -100,10 +100,30 @@ function(input, output, session) {
     hc <- view_RawData(supersapiens$glycemie) 
     
     if(input$showzones) 
-      hc %>% hc_yAxis(plotBands = viewzones())
+     hc <- hc %>% hc_yAxis(plotBands = viewzones())
+    showHR <- TRUE
+    showAlt <- TRUE
     
+      for(i in seq(length(supersapiens_fit))){
+        if (showHR)
+          hc <- hc %>% 
+            hc_add_series(supersapiens_fit[[i]]$heart.rate, 
+              type = "spline", 
+              color = 'red',
+              yAxis = 1)
+        
+        if (showAlt)
+          for(i in seq(length(supersapiens_fit)))
+            hc <- hc %>% 
+              hc_add_series(supersapiens_fit[[i]]$enhanced.altitude, 
+                type = "spline", 
+                color = 'grey',
+                yAxis = 2)
+        }
+
+
     hc
-      
+    
   })
   
   output$pga <- renderHighchart({
@@ -146,5 +166,83 @@ function(input, output, session) {
   output$heatmapPerHour <- renderHighchart({
     view_heatmapPerHour(supersapiens_heatmapPerHour)
   })
+  
+  
+  # output$chooseFitFile <- renderUI({
+  #   path <- system.file('extdata/Fit', package = 'mySuperSapiens')
+  #   
+  #   ll.fit <- list.files(path)
+  #   ll.fit <- ll.fit[grepl('-record.csv', ll.fit)]
+  #   
+  #   selectInput('filerecord', 'FIT record',
+  #     choices = ll.fit)
+  # })
+  
+
+  show <- function(df){
+  
+  highchart(type = "stock") %>%
+    hc_add_series(df, type = "spline", color = 'blue') %>%
+    hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
+    hc_add_dependency(name = "modules/annotations.js") %>%
+    
+    hc_xAxis(
+      labels = list(format = '{value:%Y/%m/%d %H:%M}'),
+      options = list(
+        timezoneOffset = 2
+      ),
+      plotBands = list(
+        list(
+          label = list(text = "2024-08-02"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-04"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-06"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-08"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-10"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-10", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-11", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-12"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-12", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-13", tz = "Europe/Paris"))
+        ),
+        list(
+          label = list(text = "2024-08-14"),
+          color = "rgba(100, 0, 0, 0.05)",
+          from = datetime_to_timestamp(as.Date("2024-08-14", tz = "Europe/Paris")),
+          to = datetime_to_timestamp(as.Date("2024-08-15", tz = "Europe/Paris"))
+        )
+      )
+    ) %>%
+    hc_yAxis(
+      min = min(as.numeric(df$glycemie)) - 20,
+      max = max(as.numeric(df$glycemie)) + 20,
+      title = list(text = "Glycémie (mg/dl)"),
+     plotBands = NULL
+    )
+  }
+  
 }
 

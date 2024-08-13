@@ -7,7 +7,7 @@ dashboardPage(
       menuItem("Glucose rushes", tabName = "rushes"),
       menuItem("Stats", tabName = "stats"),
       menuItem("Alimentation", tabName = "alimentation"),
-      menuItem("Sport", tabName = "sport"),
+      menuItem("Analyze FIT records", tabName = "sport"),
       menuItem("Settings", tabName = "Configure")
     )
   ),
@@ -20,6 +20,8 @@ dashboardPage(
             width = 12, status = "info", solidHeader = TRUE,
             title = "Glycémie",
             checkboxInput('showzones', 'Show zones', value = FALSE),
+            #uiOutput('chooseFitFile'),
+            
             highchartOutput('showRawData', height = '800px')
           ),
           box(
@@ -98,8 +100,9 @@ dashboardPage(
       tabItem("sport",
         box(
           width = 12, status = "info", solidHeader = TRUE,
-          title = "Glycémie",
-          p('sport')
+          title = "Glycémie with FIT record",
+          uiOutput('chooseFitFile'),
+          highchartOutput('showFit', height = '800px')
         )),
       tabItem("Configure",
         fluidRow(

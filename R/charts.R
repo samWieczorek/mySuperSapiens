@@ -216,6 +216,10 @@ view_RawData <- function(df){
     hc_add_series(df, type = "spline", color = 'blue') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
       hc_add_dependency(name = "modules/annotations.js") %>%
+    hc_yAxis_multiples(
+      list(title = list(text = "Glycemie"), opposite = FALSE),
+      list(showLastLabel = FALSE, opposite = TRUE, title = list(text = "Hear rate")),
+      list(showLastLabel = FALSE, opposite = TRUE, title = list(text = "Altitude"))) %>%
     
       hc_xAxis(
         labels = list(format = '{value:%Y/%m/%d %H:%M}'),
@@ -266,27 +270,27 @@ view_RawData <- function(df){
             to = datetime_to_timestamp(as.Date("2024-08-15", tz = "Europe/Paris"))
           )
         )
-      ) %>%
-      hc_yAxis(
-        min = min(as.numeric(df$glycemie)) - 20,
-        max = max(as.numeric(df$glycemie)) + 20,
-        title = list(text = "Glycémie (mg/dl)"),
-        # plotLines = list(
-        #   list(
-        #     #label = list(text = "Limite hypoglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 70
-        #   ),
-        #   list(
-        #     #label = list(text = "Limite hyperglycémie"),
-        #     color = "#000000",
-        #     width = 0.5,
-        #     value = 250
-        #   )
-        # ),
-        plotBands = NULL
       ) 
+      # hc_yAxis(
+      #   min = min(as.numeric(df$glycemie)) - 20,
+      #   max = max(as.numeric(df$glycemie)) + 20,
+      #   title = list(text = "Glycémie (mg/dl)"),
+      #   # plotLines = list(
+      #   #   list(
+      #   #     #label = list(text = "Limite hypoglycémie"),
+      #   #     color = "#000000",
+      #   #     width = 0.5,
+      #   #     value = 70
+      #   #   ),
+      #   #   list(
+      #   #     #label = list(text = "Limite hyperglycémie"),
+      #   #     color = "#000000",
+      #   #     width = 0.5,
+      #   #     value = 250
+      #   #   )
+      #   # ),
+      #   plotBands = NULL
+      # ) 
 
   #     # hc_annotations(
   #     #   list(

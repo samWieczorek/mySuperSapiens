@@ -107,6 +107,8 @@ supersapiens_timeInZones <-  GetTimeInGlucoseZones(supersapiens$glycemie)
 supersapiens_pga <- Compute_PGA(supersapiens$glycemie)
 supersapiens_heatmapPerHour <- GetHeatmapPerHour(supersapiens$glycemie)
 
+supersapiens_fit <- BuildFitData()
+
 save(
   supersapiens, 
   supersapiens.tags,
@@ -117,6 +119,7 @@ save(
   supersapiens_timeInZones,
   supersapiens_pga,
   supersapiens_heatmapPerHour,
+  supersapiens_fit,
   file = 'data/supersapiens.RData')
 
 }
@@ -149,13 +152,11 @@ AddRushes <- function(df.xts){
 #' @export
 BuildFitData <- function(){
   
-  path <- '../../../Documents/Personnel/Suivi Glycemie/'
+  path <- system.file('extdata/Fit', package = 'mySuperSapiens')
+  fit.files <- list.files(path)
+  fit.files <- fit.files[grepl('-record.csv', fit.files)]
 
-  ll.fit <- list.files(path)
-  ll.fit <- ll.fit[grepl('-record.csv', ll.fit)]
-
-  for(f in ll.fit)
-    ConvertFitFile(path, f)
+  lapply(fit.files, function(x) ConvertFitFile(path, x))
 
 }
 

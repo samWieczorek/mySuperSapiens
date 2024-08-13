@@ -6,7 +6,7 @@ ConvertFitFile <- function(path, name){
   filename <- gsub('-', '_', filename)
 
   #Add two hours
-  addTime <- function(ts, addSeconds){
+  convertTime <- function(ts){
     ts <- as.character(ts)
     date <- unlist(lapply(strsplit(ts, split = 'T'), function(x) x[1]))
     mytime <- unlist(lapply(strsplit(ts, split = 'T'), function(x) x[2]))
@@ -14,18 +14,19 @@ ConvertFitFile <- function(path, name){
       function(x)x[1]))
     
     myts <- paste0(date, ' ', time)
-    myts <- as.POSIXct(strptime(myts, format = '%Y-%m-%d %H:%M:%S'), format = '%Y-%m-%d %H:%M:%S') + addSeconds
+    myts <- as.POSIXct(format(myts, format = '%Y-%m-%d %H:%M:%S'), tz = 'Europe/Paris')
+    myts <- myts + 2 * 60 * 60
     myts
   }
-  
-  #Fix timezone
-   fit <- cbind(fit, date = addTime(fit$timestamp, 2*60*60))
+ 
+  date <- convertTime(fit$timestamp)
 
-   fit_xts <- xts::xts(fit[-1],
-     order.by = as.POSIXct(
-       fit$date,
-       format="%Y-%m-%d %H:%M:%S"))
+   fit <- cbind(date, fit)
+
+   fit <- fit[-2]
+   fit_xts <- xts::xts(fit[-1], order.by = date)
    
-   assign(filename, fit_xts)
-   eval(parse(text = paste0("save('", filename, "', file = 'data/",filename,".RData')")))
+   fit_xts
+   #assign(filename, fit_xts)
+   #eval(parse(text = paste0("save('", filename, "', file = 'data/",filename,".RData')")))
 }
