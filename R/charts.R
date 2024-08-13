@@ -1,6 +1,6 @@
 #' @title Profil Glucidique Ambulatoire
 #' @export
-view_pga <- function(df){
+view_hc_pga <- function(df){
   hc <- highchart() %>%
   hc_add_series(
     df,
@@ -175,6 +175,7 @@ hc
 #' @title View whole rushes 
 #' @export
 view_wholeRushes <- function(df){
+  browser()
 hc <- highchart(type = "stock") %>%
   hc_add_series(df$rushes.pos, type = 'column', color = 'blue') %>%
   hc_add_series(df$rushes.neg, type = 'column', color = 'red') %>%

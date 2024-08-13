@@ -98,74 +98,49 @@ function(input, output, session) {
 
   output$showRawData <- renderHighchart({
     hc <- supersapiens_hc_raw
-    
-    ##if(input$showzones) 
-     #hc <- hc %>% hc_yAxis(plotBands = viewzones())
-    
-    showHR <- TRUE
-    showAlt <- TRUE
-    
-      for(i in seq(length(supersapiens_fit))){
-        if (showHR)
-          hc <- hc %>% 
-            hc_add_series(supersapiens_fit[[i]]$heart.rate, 
-              type = "spline", 
-              color = 'red',
-              yAxis = 1)
-        
-        if (showAlt)
-          for(i in seq(length(supersapiens_fit)))
-            hc <- hc %>% 
-              hc_add_series(supersapiens_fit[[i]]$enhanced.altitude, 
-                type = "spline", 
-                color = 'grey',
-                yAxis = 2)
-        }
-
-
     hc
     
   })
   
   output$pga <- renderHighchart({
-    view_pga(supersapiens_pga) %>%
+    supersapiens_hc_pga %>%
       hc_yAxis(
-        min = min(supersapiens_pga[,2:6]), 
-        max = max(supersapiens_pga[,2:6]), 
+        #min = min(supersapiens_pga[,2:6]), 
+        #max = max(supersapiens_pga[,2:6]), 
         title = list(text = "Glycémie (mg/dl)"),
         plotBands = viewzones()
       )
   })
   
   output$meanPerDay_UI <- renderHighchart({
-    view_MeanPerDay(supersapiens_meanPerDay)
+    supersapiens_hc_meanPerDay
   })
   
   
   output$meanPerHour_UI <- renderHighchart({
-    view_MeanPerHour(supersapiens_meanPerHour)
+    supersapiens_hc_meanPerHour
   })
   
 
   output$wholeRushes <- renderHighchart({
-    view_wholeRushes(supersapiens)
+    supersapiens_hc_view_wholeRushes
   })
   
   output$variancePerDay_UI <- renderHighchart({
-    view_VariancePerDay(supersapiens_variancePerDay)
+    supersapiens_hc_variancePerDay
   })
   
   output$variancePerHour_UI <- renderHighchart({
-    view_VariancePerHour(supersapiens_variancePerHour)
+    supersapiens_hc_variancePerHour
   })
 
   output$timeInGlucoseZones <- renderHighchart({
-    view_timeInGlucoseZones(supersapiens_timeInZones)
+    supersapiens_hc_timeInZones
   })
   
   
   output$heatmapPerHour <- renderHighchart({
-    view_heatmapPerHour(supersapiens_heatmapPerHour)
+    supersapiens_hc_heatmapPerHour
   })
   
   
@@ -179,71 +154,71 @@ function(input, output, session) {
   #     choices = ll.fit)
   # })
   
-
-  show <- function(df){
-  
-  highchart(type = "stock") %>%
-    hc_add_series(df, type = "spline", color = 'blue') %>%
-    hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
-    hc_add_dependency(name = "modules/annotations.js") %>%
-    
-    hc_xAxis(
-      labels = list(format = '{value:%Y/%m/%d %H:%M}'),
-      options = list(
-        timezoneOffset = 2
-      ),
-      plotBands = list(
-        list(
-          label = list(text = "2024-08-02"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-04"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-06"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-08"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-10"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-10", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-11", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-12"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-12", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-13", tz = "Europe/Paris"))
-        ),
-        list(
-          label = list(text = "2024-08-14"),
-          color = "rgba(100, 0, 0, 0.05)",
-          from = datetime_to_timestamp(as.Date("2024-08-14", tz = "Europe/Paris")),
-          to = datetime_to_timestamp(as.Date("2024-08-15", tz = "Europe/Paris"))
-        )
-      )
-    ) %>%
-    hc_yAxis(
-      min = min(as.numeric(df$glycemie)) - 20,
-      max = max(as.numeric(df$glycemie)) + 20,
-      title = list(text = "Glycémie (mg/dl)"),
-     plotBands = NULL
-    )
-  }
+# 
+#   show <- function(df){
+#   
+#   highchart(type = "stock") %>%
+#     hc_add_series(df, type = "spline", color = 'blue') %>%
+#     hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
+#     hc_add_dependency(name = "modules/annotations.js") %>%
+#     
+#     hc_xAxis(
+#       labels = list(format = '{value:%Y/%m/%d %H:%M}'),
+#       options = list(
+#         timezoneOffset = 2
+#       ),
+#       plotBands = list(
+#         list(
+#           label = list(text = "2024-08-02"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-02", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-03", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-04"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-04", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-05", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-06"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-06", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-07", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-08"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-10"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-10", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-11", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-12"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-12", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-13", tz = "Europe/Paris"))
+#         ),
+#         list(
+#           label = list(text = "2024-08-14"),
+#           color = "rgba(100, 0, 0, 0.05)",
+#           from = datetime_to_timestamp(as.Date("2024-08-14", tz = "Europe/Paris")),
+#           to = datetime_to_timestamp(as.Date("2024-08-15", tz = "Europe/Paris"))
+#         )
+#       )
+#     ) %>%
+#     hc_yAxis(
+#       min = min(as.numeric(df$glycemie)) - 20,
+#       max = max(as.numeric(df$glycemie)) + 20,
+#       title = list(text = "Glycémie (mg/dl)"),
+#      plotBands = NULL
+#     )
+ # }
   
 }
 

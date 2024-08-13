@@ -116,9 +116,9 @@ supersapiens_hc_meanPerHour <- view_MeanPerHour(supersapiens_meanPerHour)
 supersapiens_hc_variancePerDay <- view_VariancePerDay(supersapiens_variancePerDay)
 supersapiens_hc_variancePerHour <- view_VariancePerHour(supersapiens_variancePerHour)
 supersapiens_hc_timeInZones <-  view_timeInGlucoseZones(supersapiens_timeInZones)
-supersapiens_hc_pga <- Compute_PGA(supersapiens$glycemie)
+supersapiens_hc_pga <- view_hc_pga(supersapiens_pga)
 supersapiens_hc_heatmapPerHour <- view_heatmapPerHour(supersapiens_heatmapPerHour)
-supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens)
+supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens_hc_raw)
 
 
 save(

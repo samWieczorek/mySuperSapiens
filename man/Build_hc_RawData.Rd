@@ -4,7 +4,7 @@
 \alias{Build_hc_RawData}
 \title{View raw data}
 \usage{
-Build_hc_RawData()
+Build_hc_RawData(df, fit)
 }
 \description{
 View raw data
