@@ -175,7 +175,7 @@ hc
 #' @title View whole rushes 
 #' @export
 view_wholeRushes <- function(df){
-  browser()
+
 hc <- highchart(type = "stock") %>%
   hc_add_series(df$rushes.pos, type = 'column', color = 'blue') %>%
   hc_add_series(df$rushes.neg, type = 'column', color = 'red') %>%

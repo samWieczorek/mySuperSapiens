@@ -1,6 +1,6 @@
 #' @title BuildData
 #' @export
-BuildData  <- function(filepath, timeoffset = 20){
+BuildData  <- function(filepath, offset = 20){
   
   options(xts_check_TZ = FALSE)
   
@@ -53,6 +53,9 @@ for (i in seq(length(lines))){
 }
 
 date <- as.POSIXct(format(date, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
+
+date <- date - offset
+
 supersapiens <- data.frame(date, glycemie = df.glycemie)
 
 
@@ -118,7 +121,7 @@ supersapiens_hc_variancePerHour <- view_VariancePerHour(supersapiens_variancePer
 supersapiens_hc_timeInZones <-  view_timeInGlucoseZones(supersapiens_timeInZones)
 supersapiens_hc_pga <- view_hc_pga(supersapiens_pga)
 supersapiens_hc_heatmapPerHour <- view_heatmapPerHour(supersapiens_heatmapPerHour)
-supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens_hc_raw)
+supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens)
 
 
 save(
