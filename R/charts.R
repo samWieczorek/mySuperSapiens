@@ -213,9 +213,10 @@ view_RawData <- function(df){
 
  
   highchart(type = "stock") %>%
+    hc_add_series(df, type = "spline", color = 'blue') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
       hc_add_dependency(name = "modules/annotations.js") %>%
-    hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
+    
       hc_xAxis(
         labels = list(format = '{value:%Y/%m/%d %H:%M}'),
         options = list(
@@ -245,6 +246,24 @@ view_RawData <- function(df){
             color = "rgba(100, 0, 0, 0.05)",
             from = datetime_to_timestamp(as.Date("2024-08-08", tz = "Europe/Paris")),
             to = datetime_to_timestamp(as.Date("2024-08-09", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-10"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-10", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-11", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-12"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-12", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-13", tz = "Europe/Paris"))
+          ),
+          list(
+            label = list(text = "2024-08-14"),
+            color = "rgba(100, 0, 0, 0.05)",
+            from = datetime_to_timestamp(as.Date("2024-08-14", tz = "Europe/Paris")),
+            to = datetime_to_timestamp(as.Date("2024-08-15", tz = "Europe/Paris"))
           )
         )
       ) %>%

@@ -2,10 +2,12 @@
 % Please edit documentation in R/convert.R
 \name{Fix_tags}
 \alias{Fix_tags}
-\title{BuildFitData}
+\title{#' @title BuildFitData
+#' @export}
 \usage{
 Fix_tags(df)
 }
 \description{
-BuildFitData
+#' @title BuildFitData
+#' @export
 }

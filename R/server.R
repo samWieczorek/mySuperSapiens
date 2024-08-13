@@ -97,7 +97,7 @@ function(input, output, session) {
 })
 
   output$showRawData <- renderHighchart({
-    hc <- view_RawData(supersapiens) 
+    hc <- view_RawData(supersapiens$glycemie) 
     
     if(input$showzones) 
       hc %>% hc_yAxis(plotBands = viewzones())

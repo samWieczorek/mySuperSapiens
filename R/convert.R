@@ -24,7 +24,6 @@ for (i in seq(length(lines))){
   day <- as.character(tmp[1])
   hour <- as.character(tmp[4])
   minute <-as.character(tmp[5])
-  #browser()
   .date <- paste0(year, '-', month, '-', day, ' ', hour, ':', minute)
 
   type.info <- as.numeric(splitted[4])
@@ -54,18 +53,18 @@ for (i in seq(length(lines))){
 }
 
 date <- as.POSIXct(format(date, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
-# basic data.frame
 supersapiens <- data.frame(date, glycemie = df.glycemie)
+
+
+date.tags <- as.POSIXct(format(date.tags, format = '%Y-%m-%d %H:%M'), tz = 'Europe/Paris')
+supersapiens.tags <- data.frame(date = date.tags, tags = source.tags)
 
 
 supersapiens <- supersapiens[order(supersapiens$date),]
 
 message('Discretise dataset...')
 new.data <- Discretise(supersapiens)
-
-
 supersapiens <- rbind(supersapiens, new.data)
-#supersapiens <- supersapiens[order(supersapiens$date),]
 
 
 #add columns to this final data.frame
@@ -74,61 +73,43 @@ supersapiens <- cbind(supersapiens,
   rushes.pos = rep(0, nrow(supersapiens)),
   rushes.neg = rep(0, nrow(supersapiens))
   )
+
+supersapiens.tags <- cbind(supersapiens.tags,
+  tag.type = rep('', nrow(supersapiens.tags)),
+  tag.description = rep('', nrow(supersapiens.tags)),
+  tag.description2 = rep('', nrow(supersapiens.tags))
+)
+
+
+
 message('Convert dataset to xts format...')
 supersapiens <- xts::xts(supersapiens[-1],  order.by = date)
-
-
-# ,
-#   tag.type = rep('', nrow(supersapiens)),
-#   tag.description = rep('', nrow(supersapiens)),
-#   tag.description2 = rep('', nrow(supersapiens))
-#   )
-
-# 
-# message('Adding tags to dataset...')
-# for (d in seq(length(date.tags))){
-#   ind <- which(supersapiens$date == date.tags[d])
-#   supersapiens[ind, 'tag.description'] <- source.tags[d]
-# }
-
+supersapiens.tags <- xts::xts(supersapiens.tags[-1], 
+  order.by = supersapiens.tags$date)
 
 
 # message('Fixing missing values in tags...')
-# supersapiens <- Fix_tags(supersapiens)
+# supersapiens.tags <- Fix_tags(supersapiens.tags)
 
 #Compute rushes
 message('Compute rushes...')
-
-th <- 10
-
-
-for (i in seq((nrow(supersapiens) - 5))){
-  diffval <- as.numeric(supersapiens[i+5, 'glycemie']) - as.numeric(supersapiens[i, 'glycemie'])
-  
-  if (diffval >= th)
-    supersapiens$rushes.pos[i] <- as.numeric(diffval)
-  else if (diffval <= -th)
-    supersapiens$rushes.neg[i] <- as.numeric(diffval)
-}
-
+supersapiens <- AddRushes(supersapiens)
 
 
 message('Ordering dataset by datetime...')
-#supersapiens <- supersapiens[order(supersapiens$date),]
 
 
 supersapiens_meanPerDay <- GetMeanPerDay(supersapiens$glycemie)
 supersapiens_meanPerHour <- GetMeanPerHour(supersapiens$glycemie)
 supersapiens_variancePerDay <- GetVariancePerDay(supersapiens$glycemie)
 supersapiens_variancePerHour <- GetVariancePerHour(supersapiens$glycemie)
-
 supersapiens_timeInZones <-  GetTimeInGlucoseZones(supersapiens$glycemie)
-
 supersapiens_pga <- Compute_PGA(supersapiens$glycemie)
 supersapiens_heatmapPerHour <- GetHeatmapPerHour(supersapiens$glycemie)
 
 save(
   supersapiens, 
+  supersapiens.tags,
   supersapiens_meanPerDay, 
   supersapiens_meanPerHour,
   supersapiens_variancePerDay, 
@@ -138,6 +119,26 @@ save(
   supersapiens_heatmapPerHour,
   file = 'data/supersapiens.RData')
 
+}
+
+
+#' @title Add rushes information
+#' @examples
+#' NULL
+#' 
+#' @export
+
+AddRushes <- function(df.xts){
+  th <- 10
+  for (i in seq((nrow(df.xts) - 5))){
+    diffval <- as.numeric(df.xts[i+5, 'glycemie']) - as.numeric(df.xts[i, 'glycemie'])
+    
+    if (diffval >= th)
+      df.xts$rushes.pos[i] <- as.numeric(diffval)
+    else if (diffval <= -th)
+      df.xts$rushes.neg[i] <- as.numeric(diffval)
+  }
+  df.xts
 }
 
 
@@ -216,9 +217,9 @@ Discretise <- function(df){
 
 #' #' @title BuildFitData
 #' #' @export
-#' Fix_tags <- function(df){
-#'   df[15, 'tag.type'] <- 'Alimentation'
-#'   
-#'   
-#'   df
-#' }
+Fix_tags <- function(df){
+  df[15, 'tag.type'] <- 'Alimentation'
+
+
+  df
+}
