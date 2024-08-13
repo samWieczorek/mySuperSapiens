@@ -79,21 +79,6 @@ hc
 
 
 
-#' @title View Mean per Hour 
-#' @export
-view_MeanPerHour <- function(df){
-  hc <- df %>% 
-    hchart('column', 
-      hcaes(x = hour, y = glycemie)) %>%
-    hc_colors(c("#ff384C", "#006AFE", "#3f9AFE", "#6301AD")) %>%
-    hc_add_theme(hc_theme(chart = list(backgroundColor = 'black'))) %>%
-    hc_colorAxis(
-      dataClasses = color_classes(Zones()[, 'Max'], colors = Zones()[, 'Color'])
-    )
-  hc
-}
-
-
 #' @title View variance per day 
 #' @export
 view_VariancePerDay <- function(df){
@@ -209,11 +194,11 @@ hc
 
 #' @title View raw data 
 #' @export
-view_RawData <- function(df){
+Build_hc_RawData <- function(){
 
  
   highchart(type = "stock") %>%
-    hc_add_series(df, type = "spline", color = 'blue') %>%
+    hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
       hc_add_dependency(name = "modules/annotations.js") %>%
     hc_yAxis_multiples(

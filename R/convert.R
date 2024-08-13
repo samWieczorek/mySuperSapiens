@@ -98,6 +98,9 @@ supersapiens <- AddRushes(supersapiens)
 
 message('Ordering dataset by datetime...')
 
+supersapiens_fit <- BuildFitData()
+
+supersapiens_hc_raw <- Build_hc_RawData()
 
 supersapiens_meanPerDay <- GetMeanPerDay(supersapiens$glycemie)
 supersapiens_meanPerHour <- GetMeanPerHour(supersapiens$glycemie)
@@ -107,19 +110,28 @@ supersapiens_timeInZones <-  GetTimeInGlucoseZones(supersapiens$glycemie)
 supersapiens_pga <- Compute_PGA(supersapiens$glycemie)
 supersapiens_heatmapPerHour <- GetHeatmapPerHour(supersapiens$glycemie)
 
-supersapiens_fit <- BuildFitData()
+
+supersapiens_hc_meanPerDay <- view_MeanPerDay(supersapiens_meanPerDay)
+supersapiens_hc_meanPerHour <- view_MeanPerHour(supersapiens_meanPerHour)
+supersapiens_hc_variancePerDay <- view_VariancePerDay(supersapiens_variancePerDay)
+supersapiens_hc_variancePerHour <- view_VariancePerHour(supersapiens_variancePerHour)
+supersapiens_hc_timeInZones <-  view_timeInGlucoseZones(supersapiens_timeInZones)
+supersapiens_hc_pga <- Compute_PGA(supersapiens$glycemie)
+supersapiens_hc_heatmapPerHour <- view_heatmapPerHour(supersapiens_heatmapPerHour)
+supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens)
+
 
 save(
-  supersapiens, 
-  supersapiens.tags,
-  supersapiens_meanPerDay, 
-  supersapiens_meanPerHour,
-  supersapiens_variancePerDay, 
-  supersapiens_variancePerHour,
-  supersapiens_timeInZones,
-  supersapiens_pga,
-  supersapiens_heatmapPerHour,
-  supersapiens_fit,
+  supersapiens_hc_raw, 
+  supersapiens_hc_meanPerDay, 
+  supersapiens_hc_meanPerHour,
+  supersapiens_hc_variancePerDay, 
+  supersapiens_hc_variancePerHour,
+  supersapiens_hc_timeInZones,
+  supersapiens_hc_pga,
+  supersapiens_hc_heatmapPerHour,
+  supersapiens_hc_view_wholeRushes,
+  supersapiens_hc_raw,
   file = 'data/supersapiens.RData')
 
 }

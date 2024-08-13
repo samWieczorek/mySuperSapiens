@@ -97,10 +97,11 @@ function(input, output, session) {
 })
 
   output$showRawData <- renderHighchart({
-    hc <- view_RawData(supersapiens$glycemie) 
+    hc <- Build_hc_RawData(supersapiens$glycemie) 
     
-    if(input$showzones) 
+    ##if(input$showzones) 
      hc <- hc %>% hc_yAxis(plotBands = viewzones())
+    
     showHR <- TRUE
     showAlt <- TRUE
     
