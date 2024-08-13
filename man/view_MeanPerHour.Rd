@@ -5,11 +5,7 @@
 \title{View Mean per Hour}
 \usage{
 view_MeanPerHour(df)
-
-view_MeanPerHour(df)
 }
 \description{
-View Mean per Hour
-
 View Mean per Hour
 }

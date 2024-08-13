@@ -197,7 +197,7 @@ hc
 Build_hc_RawData <- function(){
 
  
-  highchart(type = "stock") %>%
+  hc <- highchart(type = "stock") %>%
     hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
       hc_add_dependency(name = "modules/annotations.js") %>%
@@ -302,4 +302,26 @@ Build_hc_RawData <- function(){
   #     #       })
   #     #   ))
   
+  
+  showHR <- TRUE
+  showAlt <- TRUE
+  
+  for(i in seq(length(supersapiens_fit))){
+    if (showHR)
+      hc <- hc %>% 
+        hc_add_series(supersapiens_fit[[i]]$heart.rate, 
+          type = "spline", 
+          color = 'red',
+          yAxis = 1)
+    
+    if (showAlt)
+      for(i in seq(length(supersapiens_fit)))
+        hc <- hc %>% 
+          hc_add_series(supersapiens_fit[[i]]$enhanced.altitude, 
+            type = "spline", 
+            color = 'grey',
+            yAxis = 2)
+  }
+  
+  hc
 }
