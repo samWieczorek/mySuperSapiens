@@ -194,11 +194,11 @@ hc
 
 #' @title View raw data 
 #' @export
-Build_hc_RawData <- function(){
+Build_hc_RawData <- function(df, fit){
 
  
   hc <- highchart(type = "stock") %>%
-    hc_add_series(supersapiens$glycemie, type = "spline", color = 'blue') %>%
+    hc_add_series(df$glycemie, type = "spline", color = 'blue') %>%
       hc_add_theme(hc_theme(chart = list(backgroundColor = 'lightgrey'))) %>%
       hc_add_dependency(name = "modules/annotations.js") %>%
     hc_yAxis_multiples(
@@ -306,18 +306,18 @@ Build_hc_RawData <- function(){
   showHR <- TRUE
   showAlt <- TRUE
   
-  for(i in seq(length(supersapiens_fit))){
+  for(i in seq(length(fit))){
     if (showHR)
       hc <- hc %>% 
-        hc_add_series(supersapiens_fit[[i]]$heart.rate, 
+        hc_add_series(fit[[i]]$heart.rate, 
           type = "spline", 
           color = 'red',
           yAxis = 1)
     
     if (showAlt)
-      for(i in seq(length(supersapiens_fit)))
+      for(i in seq(length(fit)))
         hc <- hc %>% 
-          hc_add_series(supersapiens_fit[[i]]$enhanced.altitude, 
+          hc_add_series(fit[[i]]$enhanced.altitude, 
             type = "spline", 
             color = 'grey',
             yAxis = 2)

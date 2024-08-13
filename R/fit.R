@@ -22,11 +22,11 @@ ConvertFitFile <- function(path, name){
   date <- convertTime(fit$timestamp)
 
    fit <- cbind(date, fit)
-
-   fit <- fit[-2]
+  fit <- fit[-2]
    fit_xts <- xts::xts(fit[-1], order.by = date)
    
+   ind <- which(second(index(fit_xts)) == 0)
+   fit_xts <- fit_xts[ind,]
+   
    fit_xts
-   #assign(filename, fit_xts)
-   #eval(parse(text = paste0("save('", filename, "', file = 'data/",filename,".RData')")))
 }

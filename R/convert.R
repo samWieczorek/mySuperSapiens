@@ -100,7 +100,7 @@ message('Ordering dataset by datetime...')
 
 supersapiens_fit <- BuildFitData()
 
-supersapiens_hc_raw <- Build_hc_RawData()
+supersapiens_hc_raw <- Build_hc_RawData(supersapiens, supersapiens_fit)
 
 supersapiens_meanPerDay <- GetMeanPerDay(supersapiens$glycemie)
 supersapiens_meanPerHour <- GetMeanPerHour(supersapiens$glycemie)
