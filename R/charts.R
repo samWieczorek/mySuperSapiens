@@ -309,7 +309,7 @@ AddAnnotations <- function(hc, df.tags){
   hc <- hc %>% 
     hc_annotations(
       list(
-        
+      
         labelOptions = list(
           backgroundColor = 'black',
           verticalAlign = 'top',

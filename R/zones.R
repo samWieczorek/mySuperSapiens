@@ -9,7 +9,7 @@ Zones <- function() {
     'Recharge glucidique optimale', 
     'Etat d’inflammation latent', 
     'Hyperglycemie'),
-  Color = c("#273b76", "#6832c0", "#567df2", "#c281c8", "#fd3a4c")
+  Color = c("#900C3F", "#FF5733", "#28b463", "#2980b9", "#1a5276")
 )
 rownames(zones) <- LETTERS[seq(5)]
 
