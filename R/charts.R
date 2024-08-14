@@ -278,31 +278,6 @@ Build_hc_RawData <- function(df, fit){
       #   plotBands = NULL
       # ) 
 
-  #     # hc_annotations(
-  #     #   list(
-  #     #     labelOptions = list(
-  #     #       backgroundColor = 'rgba(255,255,255,0.6)',
-  #     #       verticalAlign = 'top',
-  #     #       y = 15
-  #     #     ),
-  #     #     
-  #     #     labels = 
-  #     #       
-  #     #       apply(df$tags, 1, function(x){
-  #     #         
-  #     #         list(
-  #     #           point = list(
-  #     #             xAxis = 0,
-  #     #             yAxis = 0,
-  #     #             x = datetime_to_timestamp(as.POSIXct(unname(x['date']), format="%Y-%m-%d %H:%M")),
-  #     #             y = 200
-  #     #           ),
-  #     #           text = unname(x['tag.description'])
-  #     #         )
-  #     #         
-  #     #       })
-  #     #   ))
-  
   
   showHR <- TRUE
   showAlt <- TRUE
@@ -325,4 +300,45 @@ Build_hc_RawData <- function(df, fit){
   }
   
   hc
+}
+
+
+
+
+AddAnnotations <- function(hc, df.tags){
+  hc <- hc %>% 
+    hc_annotations(
+      list(
+        
+        labelOptions = list(
+          backgroundColor = 'black',
+          verticalAlign = 'top',
+          y = 15
+          #shape = "connector"
+          #align = "right",
+          #justify = FALSE,
+          #crop = TRUE
+          #type= 'crookedLine'
+          
+          # style = list(
+          #   fontSize = "0.8em",
+          #   textOutline = "1px white"
+          # )
+        ),
+        
+        labels = lapply(index(df.tags), function(x){
+          list(
+            point = list(
+              xAxis = 0,
+              yAxis = 0,
+              x = datetime_to_timestamp(x),
+              y = 50
+            ),
+            text = as.character(df.tags[x]$tags)
+          )
+        })
+      ))
+  
+  hc
+  
 }

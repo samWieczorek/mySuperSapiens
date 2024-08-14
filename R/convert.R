@@ -1,5 +1,9 @@
 #' @title BuildData
 #' @export
+#' @import tidyverse
+#' @import highcharter
+#' @import xts
+#' 
 BuildData  <- function(filepath, offset = 20){
   
   options(xts_check_TZ = FALSE)
@@ -104,6 +108,7 @@ message('Ordering dataset by datetime...')
 supersapiens_fit <- BuildFitData()
 
 supersapiens_hc_raw <- Build_hc_RawData(supersapiens, supersapiens_fit)
+supersapiens_hc_raw <- AddAnnotations(supersapiens_hc_raw, supersapiens.tags)
 
 supersapiens_meanPerDay <- GetMeanPerDay(supersapiens$glycemie)
 supersapiens_meanPerHour <- GetMeanPerHour(supersapiens$glycemie)
@@ -125,6 +130,15 @@ supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens)
 
 
 save(
+  supersapiens,
+  supersapiens_meanPerDay,
+  supersapiens_meanPerHour,
+  supersapiens_variancePerDay,
+  supersapiens_variancePerHour,
+  supersapiens_timeInZones,
+  supersapiens_pga,
+  supersapiens_heatmapPerHour,
+  supersapiens.tags,
   supersapiens_hc_raw, 
   supersapiens_hc_meanPerDay, 
   supersapiens_hc_meanPerHour,

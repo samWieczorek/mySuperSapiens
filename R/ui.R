@@ -18,7 +18,7 @@ dashboardPage(
         fluidRow(
           box(
             width = 12, status = "info", solidHeader = TRUE,
-            title = "Glycémie",
+            title = "Glycémie (offset = 20')",
             checkboxInput('showzones', 'Show zones', value = FALSE),
             #uiOutput('chooseFitFile'),
             
