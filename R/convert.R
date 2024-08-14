@@ -107,6 +107,10 @@ message('Ordering dataset by datetime...')
 
 supersapiens_fit <- BuildFitData()
 
+
+supersapiens_timeInZonesHR <- GetTimeInHRZones(supersapiens_fit)
+
+
 supersapiens_hc_raw <- Build_hc_RawData(supersapiens, supersapiens_fit)
 supersapiens_hc_raw <- AddAnnotations(supersapiens_hc_raw, supersapiens.tags)
 
@@ -136,6 +140,7 @@ save(
   supersapiens_variancePerDay,
   supersapiens_variancePerHour,
   supersapiens_timeInZones,
+  supersapiens_timeInZonesHR,
   supersapiens_pga,
   supersapiens_heatmapPerHour,
   supersapiens.tags,
@@ -164,10 +169,12 @@ AddRushes <- function(df.xts){
   th <- 10
   for (i in seq((nrow(df.xts) - 5))){
     diffval <- as.numeric(df.xts[i+5, 'glycemie']) - as.numeric(df.xts[i, 'glycemie'])
+    maxval <- max(df.xts[i:i+5, 'glycemie'])
+    minval <- min(df.xts[i:i+5, 'glycemie'])
     
-    if (diffval >= th)
+    if (diffval >= th && maxval > Zones()[3, 'Max'])
       df.xts$rushes.pos[i] <- as.numeric(diffval)
-    else if (diffval <= -th)
+    else if (diffval <= -th && minval < Zones()[2, 'Min'])
       df.xts$rushes.neg[i] <- as.numeric(diffval)
   }
   df.xts
@@ -180,7 +187,7 @@ AddRushes <- function(df.xts){
 #' 
 #' @export
 BuildFitData <- function(){
-  
+  options(xts_check_TZ = FALSE)
   path <- system.file('extdata/Fit', package = 'mySuperSapiens')
   fit.files <- list.files(path)
   fit.files <- fit.files[grepl('-record.csv', fit.files)]

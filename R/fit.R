@@ -1,6 +1,7 @@
 #' @title Convert a FIT file
 #' @export
 ConvertFitFile <- function(path, name){
+  options(xts_check_TZ = FALSE)
   fit <- read.csv(file.path(path, name), header = TRUE, sep = ',')
   filename <- strsplit(name, split = '-record.csv')[[1]][1]
   filename <- gsub('-', '_', filename)

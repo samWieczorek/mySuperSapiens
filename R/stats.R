@@ -57,7 +57,70 @@ GetTimeInGlucoseZones <- function(data){
 }
 
 
+#' @title GetTimeInHRZones
+#' @export
+GetTimeInHRZones <- function(ll.fit){
+  message('GetTimeInHRZones()...')
+  
+  diffTime <- function(first, second){
+    earlier <- as.POSIXct(strptime(first, "%Y-%m-%d %H:%M"))
+    later <- as.POSIXct(strptime(second, "%Y-%m-%d %H:%M"))
+    later - earlier
+  }
+  
+  
+  list.days <- unlist(lapply(ll.fit, function(x)
+    format(index(x), format = '%Y-%m-%d')))
+  list.days <- unique(list.days)
+  ll.days <- list.days[order(list.days)]
+  
+  result <- data.frame(
+    A = rep(hms::as_hms('00:00:00'), length(ll.days)), 
+    B = rep(hms::as_hms('00:00:00'), length(ll.days)),
+    C = rep(hms::as_hms('00:00:00'), length(ll.days)),
+    D = rep(hms::as_hms('00:00:00'), length(ll.days)),
+    E = rep(hms::as_hms('00:00:00'), length(ll.days))
+  )
+  rownames(result) <- ll.days
+  
+  
+  result.seconds <- result.percentage <- data.frame(
+    A = rep(0, length(ll.days)), 
+    B = rep(0, length(ll.days)),
+    C = rep(0, length(ll.days)),
+    D = rep(0, length(ll.days)),
+    E = rep(0, length(ll.days))
+  )
+  rownames(result.seconds) <- ll.days
+  
+  
+  for(x in seq(length(ll.fit))){
+    
+    df <- zoo::fortify.zoo(ll.fit[[x]])
+   
+    for (i in seq((nrow(df) - 1))){
+      value <- as.numeric(df[i, ]$heart.rate)
 
+      if(!is.na(value)){
+        zone <- GetZoneHR(value)
+        day <- format(df[i, ]$Index, format = '%Y-%m-%d')
+      
+        ind.day <- which(rownames(result) == day)
+        ind.zone <- which(colnames(result) == zone)
+        if (!is.na(ind.day) && !is.na(ind.zone)){
+        result[ind.day, ind.zone] <- hms::as_hms(result[ind.day, ind.zone] + 60)
+        result.seconds[ind.day, ind.zone] <- result.seconds[ind.day, ind.zone] + 60
+        }
+      }
+    }
+
+  }
+  
+  
+  
+  
+  list(result = result, result.seconds = result.seconds)
+}
 
 #' @title FindGlucoseRushes
 #' @export
