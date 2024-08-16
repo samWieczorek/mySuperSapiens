@@ -30,7 +30,7 @@ GetZone <- function(value){
 
 
 
-#! @export
+#' @export
 zones_HR <- function(){
   zones <- data.frame(
     Min = c(0, 137, 151, 166, 181),

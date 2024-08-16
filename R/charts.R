@@ -123,10 +123,11 @@ view_VariancePerHour <- function(df){
 #' @export
 view_timeInGlucoseZones <- function(df, hr){
   
-  df <- supersapiens_timeInZones$percentage
+  df <- df$percentage
   per <- apply(df, 2, function(x) as.numeric(100 * x))
   rownames(per) <- xts::dimnames.xts(df)[[1]]
   per <- as.data.frame(per)
+
   hr <- hr / 60
   
   
@@ -343,7 +344,7 @@ Build_hc_RawData <- function(df, fit){
 
 
 
-
+#' @export
 AddAnnotations <- function(hc, df.tags){
   hc <- hc %>% 
     hc_annotations(
