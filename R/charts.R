@@ -121,36 +121,75 @@ view_VariancePerHour <- function(df){
 
 #' @title View time spent in glucose zones 
 #' @export
-view_timeInGlucoseZones <- function(df){
+view_timeInGlucoseZones <- function(df, hr){
   
-  per <- df$percentage
-  
-  #colnames(per) <- c('< 70 mg/dl', '70-90 mg/dl','90-140 mg/dl','> 140 mg/dl')
-  n <- nrow(per) * ncol(per)
-  df <- data.frame(
-    day = NULL, 
-    zone = NULL, 
-    percentage = NULL)
-  
-  for (i in seq(nrow(per)))
-    for (j in seq(ncol(per)))
-      df <- rbind(df, c(rownames(per)[i], colnames(per)[j], 100*as.numeric(per[i, j])))
+  df <- supersapiens_timeInZones$percentage
+  per <- apply(df, 2, function(x) as.numeric(100 * x))
+  rownames(per) <- xts::dimnames.xts(df)[[1]]
+  per <- as.data.frame(per)
+  hr <- hr / 60
   
   
-  df <- as.data.frame(df)
-  colnames(df) <- c('day', 'zone', 'percentage')
-  df[,'percentage'] <- as.numeric(df[,'percentage'])
-  
-  
-  hc <- df %>% 
-    hchart(
-      'column', 
-      hcaes(x = 'day', y = 'percentage', group = 'zone'),
-      stacking = "normal"
-    ) %>%
-    hc_colors(Zones()[, 'Color']) %>%
-    hc_add_theme(hc_theme(chart = list(backgroundColor = 'black')))
-  
+  hc <- highchart() %>% 
+    hc_chart(type = "column") %>%
+    hc_plotOptions(column = list(stacking = "normal")) %>%
+    #hc_xAxis(categories = rownames(per)) %>%
+    hc_yAxis_multiples(
+      list(title = list(text = "Glycemie (% de temps)"), opposite = FALSE),
+      list(showLastLabel = FALSE, opposite = TRUE, title = list(text = "Zones d'entrainement (duree en minutes)"))) %>%
+    hc_add_series(name = Zones()['E', 'Info'],
+      data = per$E,
+      stack = "glucose",
+      yAxis = 0,
+      color = Zones()['E', 'Color']) %>%
+    hc_add_series(name = Zones()['D', 'Info'],
+      data = per$D,
+      stack = "glucose",
+      yAxis = 0,
+      color = Zones()['D', 'Color']) %>%
+    hc_add_series(name = Zones()['C', 'Info'],
+      data = per$C,
+      stack = "glucose",
+      yAxis = 0,
+      color = Zones()['C', 'Color']) %>%
+    hc_add_series(name = Zones()['B', 'Info'],
+      data = per$B,
+      stack = "glucose",
+      yAxis = 0,
+      color = Zones()['B', 'Color']) %>%
+    hc_add_series(name = Zones()['A', 'Info'],
+      data = per$A,
+      stack = "glucose",
+      yAxis = 0,
+      color = Zones()['A', 'Color']) %>%
+    
+    hc_add_series(name = zones_HR()['E', 'Info'],
+      data = hr$E,
+      stack = "HR",
+      yAxis = 1,
+      color = zones_HR()['E', 'Color']) %>%
+    hc_add_series(name = zones_HR()['D', 'Info'],
+      data = hr$D,
+      stack = "HR",
+      yAxis = 1,
+      color = zones_HR()['D', 'Color'])%>%
+    hc_add_series(name = zones_HR()['C', 'Info'],
+      data = hr$C,
+      stack = "HR",
+      yAxis = 1,
+      color = zones_HR()['C', 'Color']) %>%
+    hc_add_series(name = zones_HR()['B', 'Info'],
+      data = hr$B,
+      stack = "HR",
+      yAxis = 1,
+      color = zones_HR()['B', 'Color']) %>%
+    hc_add_series(name = zones_HR()['A', 'Info'],
+      data = hr$A,
+      stack = "HR",
+      yAxis = 1,
+      color = zones_HR()['A', 'Color']) %>%
+
+    hc_add_theme(hc_theme_ft())
   
   hc
 }

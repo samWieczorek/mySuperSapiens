@@ -107,8 +107,12 @@ message('Ordering dataset by datetime...')
 
 supersapiens_fit <- BuildFitData()
 
+list.days <- unlist(lapply(supersapiens, function(x)
+  format(index(x), format = '%Y-%m-%d')))
+list.days <- unique(list.days)
+ll.days <- list.days[order(list.days)]
 
-supersapiens_timeInZonesHR <- GetTimeInHRZones(supersapiens_fit)
+supersapiens_timeInZonesHR <- GetTimeInHRZones(ll.days, supersapiens_fit)
 
 
 supersapiens_hc_raw <- Build_hc_RawData(supersapiens, supersapiens_fit)
@@ -127,7 +131,7 @@ supersapiens_hc_meanPerDay <- view_MeanPerDay(supersapiens_meanPerDay)
 supersapiens_hc_meanPerHour <- view_MeanPerHour(supersapiens_meanPerHour)
 supersapiens_hc_variancePerDay <- view_VariancePerDay(supersapiens_variancePerDay)
 supersapiens_hc_variancePerHour <- view_VariancePerHour(supersapiens_variancePerHour)
-supersapiens_hc_timeInZones <-  view_timeInGlucoseZones(supersapiens_timeInZones)
+supersapiens_hc_timeInZones <-  view_timeInGlucoseZones(supersapiens_timeInZones, supersapiens_timeInZonesHR)
 supersapiens_hc_pga <- view_hc_pga(supersapiens_pga)
 supersapiens_hc_heatmapPerHour <- view_heatmapPerHour(supersapiens_heatmapPerHour)
 supersapiens_hc_view_wholeRushes <- view_wholeRushes(supersapiens)

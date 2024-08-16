@@ -4,7 +4,7 @@
 \alias{view_timeInGlucoseZones}
 \title{View time spent in glucose zones}
 \usage{
-view_timeInGlucoseZones(df)
+view_timeInGlucoseZones(df, hr)
 }
 \description{
 View time spent in glucose zones

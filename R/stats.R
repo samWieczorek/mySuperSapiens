@@ -59,7 +59,7 @@ GetTimeInGlucoseZones <- function(data){
 
 #' @title GetTimeInHRZones
 #' @export
-GetTimeInHRZones <- function(ll.fit){
+GetTimeInHRZones <- function(ll.days, ll.fit){
   message('GetTimeInHRZones()...')
   
   diffTime <- function(first, second){
@@ -69,10 +69,6 @@ GetTimeInHRZones <- function(ll.fit){
   }
   
   
-  list.days <- unlist(lapply(ll.fit, function(x)
-    format(index(x), format = '%Y-%m-%d')))
-  list.days <- unique(list.days)
-  ll.days <- list.days[order(list.days)]
   
   result <- data.frame(
     A = rep(hms::as_hms('00:00:00'), length(ll.days)), 
