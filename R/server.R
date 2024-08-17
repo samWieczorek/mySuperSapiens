@@ -145,7 +145,7 @@ function(input, output, session) {
   output$heatmapPerHour <- renderHighchart({
     supersapiens_hc_heatmapPerHour
   })
-  
+   
   
 }
 
